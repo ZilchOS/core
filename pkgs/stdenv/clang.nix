@@ -1,8 +1,8 @@
-{ name ? "clang", mkDerivation
+{ name ? "clang", fetchurl, mkDerivation
 , early-clang, busybox, gnumake, musl, linux-headers, cmake, python}:
 
 let
-  source-tarball-llvm = builtins.fetchurl {
+  source-tarball-llvm = fetchurl {
     # local = /downloads/llvm-project-13.0.0.src.tar.xz;
     url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/llvm-project-13.0.0.src.tar.xz";
     sha256 = "6075ad30f1ac0e15f07c1bf062c1e1268c241d674f11bd32cdf0e040c71f2bf3";

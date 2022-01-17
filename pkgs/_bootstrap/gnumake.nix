@@ -1,7 +1,7 @@
-{ name ? "gnumake", mkDerivation, toolchain, busybox }:
+{ name ? "gnumake", fetchurl, mkDerivation, toolchain, busybox }:
 
 let
-  source-tarball-gnumake = builtins.fetchurl {
+  source-tarball-gnumake = fetchurl {
     # local = /downloads/make-4.3.tar.gz;
     url = "http://ftp.gnu.org/gnu/make/make-4.3.tar.gz";
     sha256 = "e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19";

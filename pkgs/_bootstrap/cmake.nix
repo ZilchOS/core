@@ -1,7 +1,8 @@
-{ name ? "cmake", mkDerivation, toolchain, busybox, gnumake, linux-headers} :
+{ name ? "cmake", fetchurl, mkDerivation
+, toolchain, busybox, gnumake, linux-headers} :
 
 let
-  source-tarball-cmake = builtins.fetchurl {
+  source-tarball-cmake = fetchurl {
     # local = /downloads/cmake-3.21.4.tar.gz;
     url = "https://github.com/Kitware/CMake/releases/download/v3.21.4/cmake-3.21.4.tar.gz";
     sha256 = "d9570a95c215f4c9886dd0f0564ca4ef8d18c30750f157238ea12669c2985978";

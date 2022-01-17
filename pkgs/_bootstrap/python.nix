@@ -1,7 +1,7 @@
-{ name ? "python", mkDerivation, toolchain, busybox, gnumake }:
+{ name ? "python", fetchurl, mkDerivation, toolchain, busybox, gnumake }:
 
 let
-  source-tarball-python = builtins.fetchurl {
+  source-tarball-python = fetchurl {
     # local = /downloads/Python-3.10.0.tar.xz;
     url = "https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tar.xz";
     sha256 = "5a99f8e7a6a11a7b98b4e75e0d1303d3832cada5534068f69c7b6222a7b1b002";

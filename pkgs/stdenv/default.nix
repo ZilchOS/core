@@ -1,10 +1,11 @@
-{ mkEarlyDerivation
+{ fetchurl, mkEarlyDerivation
 , bootstrap-busybox
 , early-clang, early-gnumake, early-linux-headers, early-cmake, early-python }:
 
 rec {
   musl = (import ./musl.nix) {
     name = "musl";
+    inherit fetchurl;
     mkDerivation = mkEarlyDerivation;
     toolchain = early-clang;
     busybox = bootstrap-busybox;
@@ -13,6 +14,7 @@ rec {
 
   clang = (import ./clang.nix) {
     name = "clang";
+    inherit fetchurl;
     mkDerivation = mkEarlyDerivation;
     early-clang = early-clang;
     busybox = bootstrap-busybox;
@@ -25,6 +27,7 @@ rec {
 
   busybox = (import ./busybox.nix) {
     name = "busybox";
+    inherit fetchurl;
     mkDerivation = mkEarlyDerivation;
     musl = musl;
     toolchain = clang;

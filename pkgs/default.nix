@@ -1,6 +1,15 @@
 { bootstrap-musl, bootstrap-busybox, bootstrap-toolchain }:
 
 let
+  fetchurl = { url, sha256 }: derivation {
+    builder = "builtin:fetchurl"; system = "builtin"; preferLocalBuild = true;
+    outputHashMode = "flat"; outputHashAlgo = "sha256"; outputHash = sha256;
+
+    name = builtins.baseNameOf url;
+    inherit url; urls = [ url ];
+    unpack = false;
+  };
+
   mkCaDerivation = args: derivation (args // {
     system = "x86_64-linux";
     __contentAddressed = true;
@@ -35,12 +44,12 @@ let
     } // extra;
 
   _bootstrap = (import ./_bootstrap) {
-    inherit mkEarlyDerivation;
+    inherit fetchurl mkEarlyDerivation;
     inherit bootstrap-musl bootstrap-busybox bootstrap-toolchain;
   };  # -> .early-{gnumake,linux-headers,cmake,python,clang}
 
   stdenv = (import ./stdenv) {
-    inherit mkEarlyDerivation;
+    inherit fetchurl mkEarlyDerivation;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
@@ -48,6 +57,7 @@ let
 
   gnumake = (import ./gnumake.nix) {
     name = "gnumake";
+    inherit fetchurl;
     mkDerivation = mkEarlyDerivation;
     musl = stdenv.musl;
     toolchain = stdenv.clang;

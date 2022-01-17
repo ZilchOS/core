@@ -1,7 +1,7 @@
-{ name ? "musl", mkDerivation, toolchain, busybox, gnumake }:
+{ name ? "musl", fetchurl, mkDerivation, toolchain, busybox, gnumake }:
 
 let
-  source-tarball-musl = builtins.fetchurl {
+  source-tarball-musl = fetchurl {
     # local = /downloads/musl-1.2.2.tar.gz;
     url = "http://musl.libc.org/releases/musl-1.2.2.tar.gz";
     sha256 = "9b969322012d796dc23dda27a35866034fa67d8fb67e0e2c45c913c3d43219dd";
