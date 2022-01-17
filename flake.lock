@@ -2,14 +2,17 @@
   "nodes": {
     "bootstrap-from-tcc": {
       "locked": {
-        "lastModified": 1642419132,
-        "narHash": "sha256-cgsxLcuiGLRpI4o9niv4sigMBmgaim3VAr8IlibzAZk=",
-        "type": "git",
-        "url": "file:///home/monk/code/bootstrap-from-tcc/ccache-changes"
+        "lastModified": 1642441979,
+        "narHash": "sha256-NRM7m98qPi3NMyfTkDgS9tJaAoHkBRiggEczqQi8MF8=",
+        "owner": "ZilchOS",
+        "repo": "bootstrap-from-tcc",
+        "rev": "f5e86f27b1b91dad709cb15e18f8012ac31263b9",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/monk/code/bootstrap-from-tcc/ccache-changes"
+        "owner": "ZilchOS",
+        "repo": "bootstrap-from-tcc",
+        "type": "github"
       }
     },
     "root": {
