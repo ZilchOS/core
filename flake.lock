@@ -1,0 +1,23 @@
+{
+  "nodes": {
+    "bootstrap-from-tcc": {
+      "locked": {
+        "lastModified": 1642419132,
+        "narHash": "sha256-cgsxLcuiGLRpI4o9niv4sigMBmgaim3VAr8IlibzAZk=",
+        "type": "git",
+        "url": "file:///home/monk/code/bootstrap-from-tcc/ccache-changes"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/monk/code/bootstrap-from-tcc/ccache-changes"
+      }
+    },
+    "root": {
+      "inputs": {
+        "bootstrap-from-tcc": "bootstrap-from-tcc"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
