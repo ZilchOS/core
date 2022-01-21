@@ -49,23 +49,21 @@ let
   };  # -> .early-{gnumake,linux-headers,cmake,python,clang}
 
   stdenv = (import ./stdenv) {
-    inherit fetchurl mkEarlyDerivation;
+    inherit fetchurl mkCaDerivation mkEarlyDerivation;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
   };  # -> .musl .clang .busybox
 
   gnumake = (import ./gnumake.nix) {
-    name = "gnumake";
-    inherit fetchurl;
-    mkDerivation = mkEarlyDerivation;
-    musl = stdenv.musl;
-    toolchain = stdenv.clang;
-    busybox = stdenv.busybox;
-    gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
+    inherit stdenv fetchurl;
+    early-gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
   };
 
 in
-  _bootstrap // stdenv // {
+  _bootstrap // {
+    inherit stdenv;
+    inherit (stdenv) musl clang busybox;
+  } //{
     inherit gnumake;
   }

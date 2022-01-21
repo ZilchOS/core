@@ -1,8 +1,8 @@
-{ fetchurl, mkEarlyDerivation
+{ fetchurl, mkCaDerivation, mkEarlyDerivation
 , bootstrap-busybox
 , early-clang, early-gnumake, early-linux-headers, early-cmake, early-python }:
 
-rec {
+let
   musl = (import ./musl.nix) {
     name = "musl";
     inherit fetchurl;
@@ -35,4 +35,7 @@ rec {
     gnumake = early-gnumake;
     linux-headers = early-linux-headers;
   };
-}
+in
+  ((import ./stdenv.nix) {
+    inherit mkCaDerivation musl clang busybox;
+  })
