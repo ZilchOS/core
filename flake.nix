@@ -16,6 +16,8 @@
       {
         packages.x86_64-linux = corePkgs;
 
+        lib = (import ./lib);  # a non-standard output
+
         hydraJobs = builtins.mapAttrs (_: drv: {x86_64-linux = drv;}) corePkgs;
       };
 }

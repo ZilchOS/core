@@ -1,0 +1,3 @@
+{
+  mkCallPackage = import ./mkCallPackage.nix;
+}
