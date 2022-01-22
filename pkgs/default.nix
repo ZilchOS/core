@@ -1,6 +1,8 @@
 { bootstrap-musl, bootstrap-busybox, bootstrap-toolchain }:
 
 let
+  # helper functions (_lib)
+
   fetchurl = { url, sha256 }: derivation {
     builder = "builtin:fetchurl"; system = "builtin"; preferLocalBuild = true;
     outputHashMode = "flat"; outputHashAlgo = "sha256"; outputHash = sha256;
@@ -43,10 +45,18 @@ let
       ) ];
     } // extra;
 
+  _lib = {
+    inherit fetchurl mkCaDerivation mkEarlyDerivation;
+  };
+
+  # early packages, not exposed to the users
+
   _bootstrap = (import ./_bootstrap) {
     inherit fetchurl mkEarlyDerivation;
     inherit bootstrap-musl bootstrap-busybox bootstrap-toolchain;
   };  # -> .early-{gnumake,linux-headers,cmake,python,clang}
+
+  # stdenv packages, now this is public interface territory already
 
   stdenv = (import ./stdenv) {
     inherit fetchurl mkCaDerivation mkEarlyDerivation;
@@ -55,15 +65,17 @@ let
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
   };  # -> .musl .clang .busybox
 
-  gnumake = (import ./gnumake.nix) {
-    inherit stdenv fetchurl;
-    early-gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
-  };
+  # rest of the packages
 
-in
-  _bootstrap // {
+  callPackage = (import ../lib/mkCallPackage.nix) (pkgs // _lib);
+
+  pkgs = {
     inherit stdenv;
     inherit (stdenv) musl clang busybox;
-  } //{
-    inherit gnumake;
-  }
+
+    gnumake = callPackage ./gnumake.nix {
+      early-gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
+    };
+  };
+
+in pkgs
