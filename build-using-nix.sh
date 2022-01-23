@@ -18,15 +18,6 @@ if [[ ! -e $CCACHE_HOST/bin/ccache ]]; then
 	rm $CCACHE_HOST/result
 fi
 
-[[ -e $CCACHE_HOST/ccache.conf ]] || cat > $CCACHE_HOST/ccache.conf <<EOF
-cache_dir = /ccache
-compiler_check = content
-compression = false
-sloppiness = include_file_ctime,include_file_mtime
-max_size = 0
-umask = 005
-EOF
-
 [[ -e $CCACHE_HOST/setup ]] || cat > $CCACHE_HOST/setup <<\EOF
 mkdir -p .ccache-wrappers
 for prefix in '' x86_64-linux- x86_64-linux-musl- x86_64-linux-unknown-; do
@@ -36,9 +27,14 @@ for prefix in '' x86_64-linux- x86_64-linux-musl- x86_64-linux-unknown-; do
 		fi
 	done
 done
-export PATH="$(pwd)/.ccache-wrappers:$PATH"
-export CCACHE_CONFIGPATH=/ccache/ccache.conf
+export PATH="$(pwd)/.ccache-wrappers:/ccache/bin:$PATH"
 export CCACHE_DIR="/ccache/data/$1"
+export CCACHE_COMPILERCHECK=content
+export CCACHE_SLOPPINESS=include_file_ctime,include_file_mtime
+export CCACHE_MAXSIZE=0
+export CCACHE_UMASK=005
+export CCACHE_NOHASHDIR=1
+export CCACHE_BASEDIR="$(pwd)"
 EOF
 chmod +x $CCACHE_HOST/setup
 
