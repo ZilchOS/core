@@ -1,6 +1,8 @@
 { bootstrap-musl, bootstrap-busybox, bootstrap-toolchain }:
 
 let
+  lib = (import ../lib);
+
   # helper functions (_lib)
 
   fetchurl = { url, sha256 }: derivation {
@@ -45,8 +47,8 @@ let
       ) ];
     } // extra;
 
-  _lib = {
-    inherit fetchurl mkCaDerivation mkEarlyDerivation;
+  _lib = {  # funcs that'll be available in addition to pkgs when callPackage'd
+    inherit fetchurl mkCaDerivation;
   };
 
   # early packages, not exposed to the users
@@ -60,6 +62,7 @@ let
 
   stdenv = (import ./stdenv) {
     inherit fetchurl mkCaDerivation mkEarlyDerivation;
+    inherit (lib) makeOverridable;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
@@ -67,7 +70,8 @@ let
 
   # rest of the packages
 
-  callPackage = (import ../lib/mkCallPackage.nix) (pkgs // _lib);
+  callPackage = path:
+    lib.makeOverridable ((lib.mkCallPackage (pkgs // _lib)) path);
 
   pkgs = {
     inherit stdenv;
