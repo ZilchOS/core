@@ -48,7 +48,6 @@ let
   # so they have to be built with a modular builder
 
   stdenv = (import ./stdenv) {
-    inherit mkEarlyDerivation;
     inherit (lib) fetchurl mkCaDerivation makeOverridable;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
