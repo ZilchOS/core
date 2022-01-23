@@ -45,6 +45,7 @@ let
   };  # -> .early-{gnumake,linux-headers,cmake,python,clang}
 
   # stdenv packages, now this is public interface territory already
+  # so they have to be built with a modular builder
 
   stdenv = (import ./stdenv) {
     inherit mkEarlyDerivation;

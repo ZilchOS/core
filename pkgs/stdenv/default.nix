@@ -27,12 +27,13 @@ let
   };
 
   busybox = (makeOverridable (import ./busybox.nix)) {
-    name = "busybox";
     inherit fetchurl;
-    mkDerivation = mkEarlyDerivation;
-    musl = musl;
-    toolchain = clang;
-    busybox = bootstrap-busybox;
+    stdenv = (import ./_modularBuilder.nix) {
+      envname = "preenv3";
+      inherit mkCaDerivation;
+      inherit musl clang;
+      busybox = bootstrap-busybox;
+    };
     gnumake = early-gnumake;
     linux-headers = early-linux-headers;
   };
