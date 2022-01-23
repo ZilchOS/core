@@ -15,10 +15,10 @@ stdenv.mkDerivation {
 
   patchPhase = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
-            src/job.c build-aux/install-sh po/Makefile.in.in
+            configure src/job.c build-aux/install-sh po/Makefile.in.in
   '';
 
-  configureFlags = [
+  extraConfigureFlags = [
     "--build x86_64-linux"
     "--disable-dependency-tracking"
   ];

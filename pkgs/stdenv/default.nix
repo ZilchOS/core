@@ -37,6 +37,6 @@ let
     linux-headers = early-linux-headers;
   };
 in
-  (makeOverridable (import ./stdenv.nix)) {
+  (makeOverridable (import ./_modularBuilder.nix)) {
     inherit mkCaDerivation musl clang busybox;
   }

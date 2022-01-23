@@ -1,4 +1,4 @@
-{ mkCaDerivation, musl, clang, busybox }:
+{ envname ? "stdenv", mkCaDerivation, musl, clang, busybox }:
 
 let
   phaseNames = [
@@ -39,9 +39,11 @@ let
     , builder ? "${busybox}/bin/ash"
     , buildInputs ? [], passthru ? {}
     , src ? null, patches ? []
-    , patchFlags ? [], configureFlags ? [], buildFlags ? []
-    , ...}@args:
-    (mkCaDerivation {
+    , extraPatchFlags ? [ "-p1" ]
+    , extraConfigureFlags ? []
+    , extraBuildFlags ? []
+    , ... }@args:
+    (mkCaDerivation ( rec {
       name = "${pname}-${version}";
       inherit builder;
       args = [ _buildScriptFile ];
@@ -67,22 +69,24 @@ let
       # for building as part of bootstrap-from-tcc with USE_CCACHE=1
       _ccacheSetup = ''
           if [ -e /ccache/setup ]; then
-            . /ccache/setup ZilchOS/Core/${pname}
+            . /ccache/setup ZilchOS/core/${pname}
           fi
       '';
 
+      patchFlags = [ "-p1" ] ++ extraConfigureFlags;
+      configureFlags = [ "--prefix=$out" ] ++ extraConfigureFlags;
+      buildFlags = [ "-j" "$NPROC" ] ++ extraBuildFlags;
+
       unpackPhase = "${busybox}/bin/tar --strip-components=1 -xf ${src}";
       patchPhase = builtins.concatStringsSep "\n" (map (patch:
-        "${busybox}/bin/patch -p1 ${patchFlags} < ${patch}"
+        "${busybox}/bin/patch ${builtins.toString patchFlags} < ${patch}"
       ) patches);
-      configurePhase = "./configure ${builtins.toString ([
-        "--prefix=$out"
-      ] ++ configureFlags)}";
+      configurePhase = "./configure ${builtins.toString configureFlags}";
       buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
-      installPhase = "make -j $NPROC install";
-    } // args ) // passthru;
+      installPhase = "make install";
+    } // args )) // { inherit src; } // passthru;
 
-    stdenvBase = writeFile { name = "stdenv"; contents = ""; };
+    stdenvBase = writeFile { name = envname; contents = ""; };
 in
   stdenvBase // {
     inherit writeFile musl clang busybox;
