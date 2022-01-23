@@ -32,6 +32,7 @@ stdenv.mkDerivation {
       >> $out/bin/make
     chmod +x $out/bin/make
   '';
-  #extra.allowedRequisites = [ "out" stdenv.musl stdenv.busybox ];
-  #extra.allowedReferences = [ "out" stdenv.musl stdenv.busybox ];
+
+  allowedRequisites = [ "out" stdenv.clang.sysroot stdenv.musl stdenv.busybox ];
+  allowedReferences = [ "out" stdenv.clang.sysroot stdenv.musl stdenv.busybox ];
 }
