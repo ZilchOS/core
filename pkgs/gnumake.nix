@@ -1,4 +1,5 @@
-{ name ? "gnumake", stdenv, fetchurl, early-gnumake }:
+{ name ? "gnumake", stdenv, fetchurl, gnumake }:
+# gnumake being the previous one
 
 let
   source-tarball-gnumake = fetchurl {
@@ -24,9 +25,9 @@ in
                 CONFIG_SHELL='${stdenv.busybox}/bin/ash' \
                 SHELL='${stdenv.busybox}/bin/ash'
       # test:
-        ${early-gnumake}/bin/make -j $NPROC
+        ${gnumake}/bin/make -j $NPROC
       # install:
-        ${early-gnumake}/bin/make -j $NPROC install
+        ${gnumake}/bin/make -j $NPROC install
       # wrap:
         # FIXME: patch make to use getenv?
         mv $out/bin/make $out/bin/.make.unwrapped

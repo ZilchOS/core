@@ -64,7 +64,7 @@ let
     inherit (stdenv) musl clang busybox;
 
     gnumake = callPackage ./gnumake.nix {
-      early-gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
+      gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
     };
   };
 
