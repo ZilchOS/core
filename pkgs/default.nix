@@ -5,15 +5,6 @@ let
 
   # helper functions (_lib)
 
-  fetchurl = { url, sha256 }: derivation {
-    builder = "builtin:fetchurl"; system = "builtin"; preferLocalBuild = true;
-    outputHashMode = "flat"; outputHashAlgo = "sha256"; outputHash = sha256;
-
-    name = builtins.baseNameOf url;
-    inherit url; urls = [ url ];
-    unpack = false;
-  };
-
   mkCaDerivation = args: derivation (args // {
     system = "x86_64-linux";
     __contentAddressed = true;
@@ -48,21 +39,23 @@ let
     } // extra;
 
   _lib = {  # funcs that'll be available in addition to pkgs when callPackage'd
-    inherit fetchurl mkCaDerivation;
+    inherit (lib) fetchurl;
+    inherit mkCaDerivation;
   };
 
   # early packages, not exposed to the users
 
   _bootstrap = (import ./_bootstrap) {
-    inherit fetchurl mkEarlyDerivation;
+    inherit mkEarlyDerivation;
+    inherit (lib) fetchurl;
     inherit bootstrap-musl bootstrap-busybox bootstrap-toolchain;
   };  # -> .early-{gnumake,linux-headers,cmake,python,clang}
 
   # stdenv packages, now this is public interface territory already
 
   stdenv = (import ./stdenv) {
-    inherit fetchurl mkCaDerivation mkEarlyDerivation;
-    inherit (lib) makeOverridable;
+    inherit mkCaDerivation mkEarlyDerivation;
+    inherit (lib) fetchurl makeOverridable;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
