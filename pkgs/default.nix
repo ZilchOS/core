@@ -3,18 +3,12 @@
 let
   lib = (import ../lib);
 
-  # helper functions (_lib)
-
-  mkCaDerivation = args: derivation (args // {
-    system = "x86_64-linux";
-    __contentAddressed = true;
-    outputHashAlgo = "sha256"; outputHashMode = "recursive";
-  });
+  # more helper functions (of a less generic nature)
 
   defaultBuilder = "${bootstrap-busybox}/bin/ash";
   mkEarlyDerivation =
     {name, script, buildInputs, builder ? defaultBuilder, extra ? {}}:
-    mkCaDerivation {
+    lib.mkCaDerivation {
       inherit name builder;
       args = [ "-uexc" (
         ''
@@ -39,8 +33,7 @@ let
     } // extra;
 
   _lib = {  # funcs that'll be available in addition to pkgs when callPackage'd
-    inherit (lib) fetchurl;
-    inherit mkCaDerivation;
+    inherit (lib) fetchurl mkCaDerivation;
   };
 
   # early packages, not exposed to the users
@@ -54,8 +47,8 @@ let
   # stdenv packages, now this is public interface territory already
 
   stdenv = (import ./stdenv) {
-    inherit mkCaDerivation mkEarlyDerivation;
-    inherit (lib) fetchurl makeOverridable;
+    inherit mkEarlyDerivation;
+    inherit (lib) fetchurl mkCaDerivation makeOverridable;
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
