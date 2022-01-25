@@ -1,4 +1,4 @@
-{ name ? "pkgconfig", stdenv, fetchurl, gnumake }:
+{ name ? "pkg-config", stdenv, fetchurl, gnumake }:
 
 stdenv.mkDerivation {
   pname = name;
@@ -12,7 +12,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  patchPhase = ''
+  prePatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
             configure glib/configure install-sh glib/install-sh
   '';
