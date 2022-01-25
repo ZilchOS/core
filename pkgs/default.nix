@@ -74,6 +74,7 @@ let
     ca-bundle = callPackage ./curl/ca-bundle.nix {};
 
     sqlite = callPackage ./nix/sqlite.nix {};
+    editline = callPackage ./nix/editline.nix {};
   };
 
 in pkgs
