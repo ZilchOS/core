@@ -1,4 +1,4 @@
-{ envname ? "stdenv", mkCaDerivation, musl, clang, busybox }:
+{ envname ? "stdenv", mkCaDerivation, musl, clang, busybox, patchelf }:
 
 let
   phaseNames = [
@@ -109,7 +109,7 @@ let
     stdenvBase = writeFile { name = envname; contents = ""; };
 in
   stdenvBase // {
-    inherit writeFile musl clang busybox;
+    inherit writeFile musl clang busybox patchelf;
     mkDerivation = _mkMkDerivation [ busybox clang ];
     mkDerivationNoCC = _mkMkDerivation [ busybox ];
   }
