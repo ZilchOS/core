@@ -89,17 +89,19 @@ let
       buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
       installPhase = "make install";
       fixupPhase = ''
+        mass_strip() {
+          find "$1" -type f -name "$2" -exec \
+            sh -c 'echo {}; ${clang}/bin/strip {} || true' ';'
+        }
         for output in $outputs; do
           opath=$(eval "echo $"$output"")
           if [ -e $opath/lib ]; then
-            find $opath/lib -type f -name '*.a' -exec \
-              sh -c '${clang}/bin/strip {} || true' +
-            find $opath/lib -type f -name '*.so' -exec \
-              sh -c '${clang}/bin/strip {} || true' +
+            mass_strip $opath/lib '*.a'
+            mass_strip $opath/lib '*.so'
+            mass_strip $opath/lib '*.so.*'
           fi
           if [ -e $opath/bin ]; then
-            find $opath/bin -type f -exec \
-              sh -c '${clang}/bin/strip {} || true' +
+            mass_strip $opath/bin '*'
           fi
         done
       '';
