@@ -66,6 +66,8 @@ let
     gnumake = callPackage ./gnumake.nix {
       gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
     };
+
+    pkg-config = callPackage ./pkg-config.nix {};
   };
 
 in pkgs

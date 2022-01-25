@@ -19,6 +19,6 @@ stdenv.mkDerivation {
 
   extraConfigureFlags = [ "--with-internal-glib" ];
 
-  allowedRequisites = [ "out" stdenv.musl ];
-  allowedReferences = [ "out" stdenv.musl ];
+  allowedRequisites = [ "out" stdenv.clang.sysroot stdenv.musl ];
+  allowedReferences = [ "out" stdenv.clang.sysroot stdenv.musl ];
 }
