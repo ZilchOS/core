@@ -68,6 +68,10 @@ let
     };
 
     pkg-config = callPackage ./pkg-config.nix {};
+
+    curl = callPackage ./curl/curl.nix {};
+    mbedtls = callPackage ./curl/mbedtls.nix {};
+    ca-bundle = callPackage ./curl/ca-bundle.nix {};
   };
 
 in pkgs

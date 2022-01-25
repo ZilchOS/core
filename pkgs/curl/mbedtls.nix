@@ -1,17 +1,17 @@
 { name ? "mbedtls", stdenv, fetchurl, gnumake }:
 
-#> FETCH 525bfde06e024c1218047dee1c8b4c89312df1a4b5658711009086cda5dfaa55
-#>  FROM https://github.com/ARMmbed/mbedtls/archive/refs/tags/v3.0.0.tar.gz
-#>    AS mbedtls-3.0.0.tar.gz
+#> FETCH 6519579b836ed78cc549375c7c18b111df5717e86ca0eeff4cb64b2674f424cc
+#>  FROM https://github.com/ARMmbed/mbedtls/archive/refs/tags/v2.28.0.tar.gz
+#>    AS mbedtls-2.28.0.tar.gz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "3.0.0";
+  version = "2.28.0";  # curl doesn't seem to be ready for 3.0/3.1 as of 7.81
 
   src = fetchurl {
-    # local = /downloads/mbedtls-3.0.0.tar.gz;
-    url = "https://github.com/ARMmbed/mbedtls/archive/refs/tags/v3.0.0.tar.gz";
-    sha256 = "525bfde06e024c1218047dee1c8b4c89312df1a4b5658711009086cda5dfaa55";
+    # local = /downloads/mbedtls-2.28.0.tar.gz;
+    url = "https://github.com/ARMmbed/mbedtls/archive/refs/tags/v2.28.0.tar.gz";
+    sha256 = "6519579b836ed78cc549375c7c18b111df5717e86ca0eeff4cb64b2674f424cc";
   };
 
   buildInputs = [ gnumake ];
