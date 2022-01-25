@@ -7,10 +7,14 @@ let
     "preConfigure"  "configurePhase"  "postConfigure"
     "preBuild"      "buildPhase"      "postBuild"
     "preInstall"    "installPhase"    "postInstall"
+    "preFixup"      "fixupPhase"      "postFixup"
   ];
 
   _buildScript = ''
     set -ue
+
+    : ''${outputs:=out}
+    export outputs
 
     eval "$_nprocSetup"
     eval "$_pathSetup"
@@ -84,6 +88,22 @@ let
       configurePhase = "./configure ${builtins.toString configureFlags}";
       buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
       installPhase = "make install";
+      fixupPhase = ''
+        for output in $outputs; do
+          opath=$(eval "echo $"$output"")
+          if [ -e $opath/lib ]; then
+            find $opath/lib -type f -name '*.a' -exec \
+              sh -c '${clang}/bin/strip {} || true' +
+            find $opath/lib -type f -name '*.so' -exec \
+              sh -c '${clang}/bin/strip {} || true' +
+          fi
+          if [ -e $opath/bin ]; then
+            find $opath/bin -type f -exec \
+              sh -c '${clang}/bin/strip {} || true' +
+          fi
+        done
+      '';
+
     } // args )) // { inherit src; } // passthru;
 
     stdenvBase = writeFile { name = envname; contents = ""; };

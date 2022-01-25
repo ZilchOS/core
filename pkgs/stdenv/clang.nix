@@ -145,6 +145,8 @@ stdenv.mkDerivation {
     rm $sysroot/phantom-linux-headers
   '';
 
+  fixupPhase = "";
+
   outputs = [ "toolchain" "sysroot" ];
 
   allowedRequisites = [ "toolchain" "sysroot" stdenv.musl ];

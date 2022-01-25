@@ -25,7 +25,6 @@ stdenv.mkDerivation {
   extraBuildFlags = [ "CFLAGS=-O2" ];
 
   postInstall = ''
-      strip $out/lib/libc.a $out/lib/libc.so
       mkdir -p $out/bin
       ln -s $out/lib/libc.so $out/bin/ldd
   '';
