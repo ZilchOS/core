@@ -12,9 +12,9 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  patchPhase = ''
+  prePatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
-            configure build-aux/install-sh
+      configure build-aux/install-sh
   '';
 
   extraBuildFlags = [ "CXXFLAGS='-O2 -Wl,-rpath ${stdenv.clang.sysroot}/lib'" ];

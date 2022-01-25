@@ -13,9 +13,9 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  patchPhase = ''
+  prePatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
-            configure src/job.c build-aux/install-sh po/Makefile.in.in
+      configure src/job.c build-aux/install-sh po/Makefile.in.in
   '';
 
   extraConfigureFlags = [
