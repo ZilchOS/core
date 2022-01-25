@@ -27,9 +27,8 @@ stdenv.mkDerivation {
   postInstall = ''
     mv $out/bin/make $out/bin/.make.unwrapped
     echo '#!${stdenv.busybox}/bin/ash' > $out/bin/make
-    echo -n 'exec $out/bin/.make.unwrapped ' > $out/bin/make
-    echo 'SHELL=${stdenv.busybox}/bin/ash \"\$@\"' \
-      >> $out/bin/make
+    echo -n "exec $out/bin/.make.unwrapped " >> $out/bin/make
+    echo 'SHELL=${stdenv.busybox}/bin/ash "$@"' >> $out/bin/make
     chmod +x $out/bin/make
   '';
 
