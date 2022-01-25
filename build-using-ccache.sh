@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# this is entirely optional and for development purposes only
+# just use `nix build` and you should be fine
+
 # build with ccache and without /bin/sh present
 # your nix needs experimental-options = ca-derivations
 # and you need root access / to be a trusted user
