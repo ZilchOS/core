@@ -21,8 +21,8 @@ stdenv.mkDerivation {
               src/misc/wordexp.c
   '';
 
-  extraConfigureFlags = [ "CFLAGS='-O0 -g'" ];
-  extraBuildFlags = [ "CFLAGS='-O0 -g'" ];
+  extraConfigureFlags = [ "CFLAGS=-O2" ];
+  extraBuildFlags = [ "CFLAGS=-O2" ];
 
   postInstall = ''
       mkdir -p $out/bin
