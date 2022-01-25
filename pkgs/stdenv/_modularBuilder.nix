@@ -47,66 +47,68 @@ let
     , extraConfigureFlags ? []
     , extraBuildFlags ? []
     , ... }@args:
-    (mkCaDerivation ( rec {
-      name = "${pname}-${version}";
-      inherit builder;
-      args = [ _buildScriptFile ];
+    (
+      mkCaDerivation ( rec {
+        name = "${pname}-${version}";
+        inherit builder;
+        args = [ _buildScriptFile ];
 
-      passAsFile = phaseNames;
+        passAsFile = phaseNames;
 
-      _nprocSetup = ''
-        if [ -n "$NIX_BUILD_CORES" ] && [ "$NIX_BUILD_CORES" != 0 ]; then
-          export NPROC=$NIX_BUILD_CORES
-        elif [ "$NIX_BUILD_CORES" == 0 ] && [ -r /proc/cpuinfo ]; then
-          export NPROC=$(${busybox}/bin/grep -c processor /proc/cpuinfo)
-        else
-          export NPROC=1
-        fi
-      '';
-
-      _pathSetup = ''
-        export PATH=${builtins.concatStringsSep ":" (
-          map (x: "${x}/bin") (buildInputs ++ bakedInBuiltInputs)
-        )}
-      '';
-
-      # for building as part of bootstrap-from-tcc with USE_CCACHE=1
-      _ccacheSetup = ''
-          if [ -e /ccache/setup ]; then
-            . /ccache/setup ZilchOS/core/${pname}
+        _nprocSetup = ''
+          if [ -n "$NIX_BUILD_CORES" ] && [ "$NIX_BUILD_CORES" != 0 ]; then
+            export NPROC=$NIX_BUILD_CORES
+          elif [ "$NIX_BUILD_CORES" == 0 ] && [ -r /proc/cpuinfo ]; then
+            export NPROC=$(${busybox}/bin/grep -c processor /proc/cpuinfo)
+          else
+            export NPROC=1
           fi
-      '';
+        '';
 
-      patchFlags = [ "-p1" ] ++ extraConfigureFlags;
-      configureFlags = [ "--prefix=$out" ] ++ extraConfigureFlags;
-      buildFlags = [ "-j" "$NPROC" ] ++ extraBuildFlags;
+        _pathSetup = ''
+          export PATH=${builtins.concatStringsSep ":" (
+            map (x: "${x}/bin") (buildInputs ++ bakedInBuiltInputs)
+          )}
+        '';
 
-      unpackPhase = "${busybox}/bin/tar --strip-components=1 -xf ${src}";
-      patchPhase = builtins.concatStringsSep "\n" (map (patch:
-        "${busybox}/bin/patch ${builtins.toString patchFlags} < ${patch}"
-      ) patches);
-      configurePhase = "./configure ${builtins.toString configureFlags}";
-      buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
-      installPhase = "make install";
-      fixupPhase = ''
-        mass_strip() {
-          find "$1" -type f -name "$2" -exec \
-            sh -c 'echo {}; ${clang}/bin/strip {} || true' ';'
-        }
-        for output in $outputs; do
-          opath=$(eval "echo $"$output"")
-          if [ -e $opath/lib ]; then
-            mass_strip $opath/lib '*.a'
-            mass_strip $opath/lib '*.so'
-            mass_strip $opath/lib '*.so.*'
-          fi
-          if [ -e $opath/bin ]; then
-            mass_strip $opath/bin '*'
-          fi
-        done
-      '';
+        # for building as part of bootstrap-from-tcc with USE_CCACHE=1
+        _ccacheSetup = ''
+            if [ -e /ccache/setup ]; then
+              . /ccache/setup ZilchOS/core/${pname}
+            fi
+        '';
 
-    } // args )) // { inherit src; } // passthru;
+        patchFlags = [ "-p1" ] ++ extraConfigureFlags;
+        configureFlags = [ "--prefix=$out" ] ++ extraConfigureFlags;
+        buildFlags = [ "-j" "$NPROC" ] ++ extraBuildFlags;
+
+        unpackPhase = "${busybox}/bin/tar --strip-components=1 -xf ${src}";
+        patchPhase = builtins.concatStringsSep "\n" (map (patch:
+          "${busybox}/bin/patch ${builtins.toString patchFlags} < ${patch}"
+        ) patches);
+        configurePhase = "./configure ${builtins.toString configureFlags}";
+        buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
+        installPhase = "make install";
+        fixupPhase = ''
+          mass_strip() {
+            find "$1" -type f -name "$2" -exec \
+              sh -c 'echo {}; ${clang}/bin/strip {} || true' ';'
+          }
+          for output in $outputs; do
+            opath=$(eval "echo $"$output"")
+            if [ -e $opath/lib ]; then
+              mass_strip $opath/lib '*.a'
+              mass_strip $opath/lib '*.so'
+              mass_strip $opath/lib '*.so.*'
+            fi
+            if [ -e $opath/bin ]; then
+              mass_strip $opath/bin '*'
+            fi
+          done
+        '';
+
+      } // (builtins.removeAttrs args [ "passthru" ] ))
+    ) // { inherit src; } // passthru;
 
     stdenvBase = writeFile { name = envname; contents = ""; };
 in
