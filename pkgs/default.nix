@@ -73,6 +73,9 @@ let
     mbedtls = callPackage ./curl/mbedtls.nix {};
     ca-bundle = callPackage ./curl/ca-bundle.nix {};
 
+    boost = callPackage ./nix/boost.nix {
+      linux-headers = _bootstrap.early-linux-headers;
+    };
     sqlite = callPackage ./nix/sqlite.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
     editline = callPackage ./nix/editline.nix {};
