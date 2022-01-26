@@ -73,6 +73,9 @@ let
     mbedtls = callPackage ./curl/mbedtls.nix {};
     ca-bundle = callPackage ./curl/ca-bundle.nix {};
 
+    nix = callPackage ./nix/nix.nix {
+      linux-headers = _bootstrap.early-linux-headers;
+    };
     boost = callPackage ./nix/boost.nix {
       linux-headers = _bootstrap.early-linux-headers;
     };
