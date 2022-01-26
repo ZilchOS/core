@@ -76,6 +76,7 @@ let
     boost = callPackage ./nix/boost.nix {
       linux-headers = _bootstrap.early-linux-headers;
     };
+    brotli = callPackage ./nix/brotli.nix {};
     sqlite = callPackage ./nix/sqlite.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
     editline = callPackage ./nix/editline.nix {};
