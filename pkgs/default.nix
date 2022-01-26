@@ -79,6 +79,7 @@ let
     brotli = callPackage ./nix/brotli.nix {};
     sqlite = callPackage ./nix/sqlite.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
+    gnugperf = callPackage ./nix/gnugperf.nix {};
     editline = callPackage ./nix/editline.nix {};
     libsodium = callPackage ./nix/libsodium.nix {};
     libarchive = callPackage ./nix/libarchive.nix {};
