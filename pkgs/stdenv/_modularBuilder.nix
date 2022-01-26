@@ -18,6 +18,7 @@ let
 
     eval "$_nprocSetup"
     eval "$_pathSetup"
+    eval "$_pkgConfigSetup"
     eval "$_ccacheSetup"
 
     set +u
@@ -66,16 +67,32 @@ let
         '';
 
         _pathSetup = ''
-          export PATH=${builtins.concatStringsSep ":" (
-            map (x: "${x}/bin") (buildInputs ++ bakedInBuiltInputs)
-          )}
+          PATH=""
+          for _PATH_CANDIDATE in ${builtins.toString
+              (bakedInBuiltInputs ++ buildInputs)}; do
+            if [[ -d $_PATH_CANDIDATE/bin ]]; then
+              PATH=$_PATH_CANDIDATE/bin:$PATH
+            fi
+          done
+          export PATH="$(echo -n $PATH | head -c-1)"
+        '';
+
+        _pkgConfigSetup= ''
+          PKG_CONFIG_PATH=""
+          for _PKGC_CANDIDATE in ${builtins.toString
+              (bakedInBuiltInputs ++ buildInputs)}; do
+            if [[ -d $_PKGC_CANDIDATE/lib/pkgconfig ]]; then
+              PKG_CONFIG_PATH=$_PKGC_CANDIDATE/lib/pkgconfig:$PKG_CONFIG_PATH
+            fi
+          done
+          export PKG_CONFIG_PATH="$(echo -n $PKG_CONFIG_PATH | head -c-1)"
         '';
 
         # for building as part of bootstrap-from-tcc with USE_CCACHE=1
         _ccacheSetup = ''
-            if [ -e /ccache/setup ]; then
-              . /ccache/setup ZilchOS/core/${pname}
-            fi
+          if [ -e /ccache/setup ]; then
+            . /ccache/setup ZilchOS/core/${pname}
+          fi
         '';
 
         patchFlags = [ "-p1" ] ++ extraConfigureFlags;
