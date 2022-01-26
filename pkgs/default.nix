@@ -81,6 +81,7 @@ let
     seccomp = callPackage ./nix/seccomp.nix {
       linux-headers = _bootstrap.early-linux-headers;
     };
+    lowdown = callPackage ./nix/lowdown.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
     gnugperf = callPackage ./nix/gnugperf.nix {};
     editline = callPackage ./nix/editline.nix {};
