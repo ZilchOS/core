@@ -15,6 +15,8 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
+  outputs = [ "all" "headers" "nixRuntimeMini" ];
+
   prePatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       bootstrap.sh tools/build/src/engine/build.sh
@@ -35,9 +37,20 @@ stdenv.mkDerivation {
   '';
   installPhase = ''
     export LD_LIBRARY_PATH="${stdenv.clang.sysroot}/lib"
-    ./b2 install --prefix=$out
+    ./b2 install --prefix=$all
+    # Make boost header paths relative so that they are not runtime dependencies
+    cd $all/include
+    find . -type f -exec sh -c \
+      'echo {}; echo "#line 1 \"{}\"" >tmp; cat {} >>tmp; cat tmp > {}; rm tmp' ';'
+    cd -
+    mkdir -p $nixRuntimeMini/lib
+    cp -r $all/lib/libboost_context*.so* $nixRuntimeMini/lib/
+    cp -r $all/lib/libboost_thread*.so* $nixRuntimeMini/lib/
+    cp -r $all/lib/libboost_system*.so* $nixRuntimeMini/lib/
+    mkdir -p $headers
+    cp -r $all/include $headers/
   '';
 
-  allowedRequisites = [ "out" stdenv.musl ];
-  allowedReferences = [ "out" stdenv.musl ];
+  allowedRequisites = [ "all" stdenv.musl ];
+  allowedReferences = [ "all" stdenv.musl ];
 }
