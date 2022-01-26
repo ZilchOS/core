@@ -78,6 +78,9 @@ let
     };
     brotli = callPackage ./nix/brotli.nix {};
     sqlite = callPackage ./nix/sqlite.nix {};
+    seccomp = callPackage ./nix/seccomp.nix {
+      linux-headers = _bootstrap.early-linux-headers;
+    };
     gnubash = callPackage ./nix/gnubash.nix {};
     gnugperf = callPackage ./nix/gnugperf.nix {};
     editline = callPackage ./nix/editline.nix {};
