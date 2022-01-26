@@ -79,6 +79,7 @@ let
     sqlite = callPackage ./nix/sqlite.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
     editline = callPackage ./nix/editline.nix {};
+    libarchive = callPackage ./nix/libarchive.nix {};
   };
 
 in pkgs
