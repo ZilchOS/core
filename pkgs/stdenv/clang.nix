@@ -139,9 +139,9 @@ stdenv.mkDerivation {
     ln -s $toolchain/bin/clang++ $toolchain/bin/c++
     ln -s $toolchain/bin/clang-cpp $toolchain/bin/cpp
     ln -s $toolchain/bin/lld $toolchain/bin/ld
-    # mix in new libraries into sysroot
     cp -r $toolchain/lib/x86_64-unknown-linux-musl/* $sysroot/lib/
-    # remove phantom linux headers
+    cp -r $toolchain/lib/clang $sysroot/lib/
+    ln -s $sysroot/lib/clang/13.0.0/include $sysroot/include/clang
     rm $sysroot/phantom-linux-headers
   '';
 
