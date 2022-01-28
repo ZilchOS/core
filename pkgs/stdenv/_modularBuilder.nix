@@ -104,7 +104,7 @@ let
           "${busybox}/bin/patch ${builtins.toString patchFlags} < ${patch}"
         ) patches);
         configurePhase = "./configure ${builtins.toString configureFlags}";
-        buildPhase = "make -j $NPROC ${builtins.toString buildFlags}";
+        buildPhase = "make ${builtins.toString buildFlags}";
         installPhase = "make install";
         fixupPhase = ''
           mass_strip() {
