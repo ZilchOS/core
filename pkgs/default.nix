@@ -1,4 +1,5 @@
-{ bootstrap-musl, bootstrap-busybox, bootstrap-toolchain }:
+{ bootstrap-musl, bootstrap-busybox, bootstrap-toolchain
+, use-ccache ? false }:
 
 let
   lib = (import ../lib);
@@ -16,9 +17,6 @@ let
             map (x: "${x}/bin") buildInputs
           )}
 
-          # for building as part of bootstrap-from-tcc with USE_CCACHE=1
-          if [ -e /ccache/setup ]; then . /ccache/setup ZilchOS/Core/${name}; fi
-
           unpack() (tar --strip-components=1 -xf "$@")
 
           if [ -n "$NIX_BUILD_CORES" ] && [ "$NIX_BUILD_CORES" != 0 ]; then
@@ -28,7 +26,9 @@ let
           else
               NPROC=1
           fi
-        '' + script
+        '' + (if ! use-ccache then "" else ''
+          . /ccache/setup ZilchOS/core/${name}
+        '') + script
       ) ];
     } // extra;
 
@@ -52,6 +52,7 @@ let
     inherit bootstrap-busybox;  # a bit of a layering violation
     inherit (_bootstrap) early-clang early-gnumake;
     inherit (_bootstrap) early-linux-headers early-cmake early-python;
+    inherit use-ccache;
   };  # -> .musl .clang .busybox
 
   # rest of the packages

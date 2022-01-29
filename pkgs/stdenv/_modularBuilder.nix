@@ -1,3 +1,4 @@
+use-ccache:
 { envname ? "stdenv", mkCaDerivation, musl, clang, busybox, patchelf }:
 
 let
@@ -19,10 +20,11 @@ let
     eval "$_nprocSetup"
     eval "$_pathSetup"
     eval "$_pkgConfigSetup"
-    eval "$_ccacheSetup"
 
     set +u
-  '' + (builtins.concatStringsSep "\n\n" (map (phaseName: ''
+  '' + (if ! use-ccache then "" else ''
+    eval "$_ccacheSetup"
+  '') + (builtins.concatStringsSep "\n\n" (map (phaseName: ''
     if [ -e "''${${phaseName}Path}" ]; then
       echo "${phaseName}:"
       ${busybox}/bin/ash -uex "''${${phaseName}Path}"
@@ -88,13 +90,6 @@ let
           export PKG_CONFIG_PATH="$(echo -n $PKG_CONFIG_PATH | head -c-1)"
         '';
 
-        # for building as part of bootstrap-from-tcc with USE_CCACHE=1
-        _ccacheSetup = ''
-          if [ -e /ccache/setup ]; then
-            . /ccache/setup ZilchOS/core/${pname}
-          fi
-        '';
-
         patchFlags = [ "-p1" ] ++ extraConfigureFlags;
         configureFlags = [ "--prefix=$out" ] ++ extraConfigureFlags;
         buildFlags = [ "-j" "$NPROC" ] ++ extraBuildFlags;
@@ -123,8 +118,9 @@ let
             fi
           done
         '';
-
-      } // (builtins.removeAttrs args [ "passthru" ] ))
+      } // (if ! use-ccache then {} else { _ccacheSetup = ''
+        . /ccache/setup ZilchOS/core/${pname}
+      ''; }) // (builtins.removeAttrs args [ "passthru" ] ))
     ) // { inherit src; } // passthru;
 
     stdenvBase = writeFile { name = envname; contents = ""; };

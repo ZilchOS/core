@@ -7,6 +7,8 @@
 # your nix needs experimental-options = ca-derivations
 # and you need root access / to be a trusted user
 
+# example: ./build-using-ccache.sh -L '.#ccachedPackages.stdenv.musl'
+
 set -ue
 
 CCACHE_HOST=/var/cache/ccache

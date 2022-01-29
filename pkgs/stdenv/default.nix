@@ -1,12 +1,15 @@
 { fetchurl, mkCaDerivation
 , makeOverridable
 , bootstrap-busybox
-, early-clang, early-gnumake, early-linux-headers, early-cmake, early-python }:
+, early-clang, early-gnumake, early-linux-headers, early-cmake, early-python
+, use-ccache }:
 
 let
+  modularBuilder = (import ./_modularBuilder.nix) use-ccache;
+
   musl = (makeOverridable (import ./musl.nix)) {
     inherit fetchurl;
-    stdenv = (import ./_modularBuilder.nix) {
+    stdenv = modularBuilder {
       envname = "preenv1";
       inherit mkCaDerivation;
       musl = null;
@@ -19,7 +22,7 @@ let
 
   clang = (makeOverridable (import ./clang.nix)) {
     inherit fetchurl;
-    stdenv = (import ./_modularBuilder.nix) {
+    stdenv = modularBuilder {
       envname = "preenv2";
       inherit mkCaDerivation;
       inherit musl;
@@ -35,7 +38,7 @@ let
 
   busybox = (makeOverridable (import ./busybox.nix)) {
     inherit fetchurl;
-    stdenv = (import ./_modularBuilder.nix) {
+    stdenv = modularBuilder {
       envname = "preenv3";
       inherit mkCaDerivation;
       inherit musl clang;
@@ -48,7 +51,7 @@ let
 
   patchelf = (makeOverridable (import ./patchelf.nix)) {
     inherit fetchurl;
-    stdenv = (import ./_modularBuilder.nix) {
+    stdenv = modularBuilder {
       envname = "preenv4";
       inherit mkCaDerivation;
       inherit musl clang busybox;
@@ -58,6 +61,6 @@ let
   };
 
 in
-  (makeOverridable (import ./_modularBuilder.nix)) {
+  (makeOverridable modularBuilder) {
     inherit mkCaDerivation musl clang busybox patchelf;
   }
