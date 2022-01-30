@@ -101,7 +101,8 @@ in
         make SHELL=$SHELL -C build -j $NPROC runtimes  # continue in parallel
         NEW_LIB_DIR="$(pwd)/build/lib/x86_64-unknown-linux-musl"
         export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$NEW_LIB_DIR"
-        make SHELL=$SHELL -C build -j $NPROC stage2-build
+        make SHELL=$SHELL -C build clang-bootstrap-deps
+        make SHELL=$SHELL -C build -j $NPROC stage2
       # install:
         make SHELL=$SHELL -C build stage2-install  # again, serial because flaky
         ln -s $out/lib/x86_64-unknown-linux-musl/* $out/lib/
