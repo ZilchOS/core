@@ -43,4 +43,5 @@ export CCACHE_BASEDIR="$(pwd)"
 EOF
 chmod +x $CCACHE_HOST/setup
 
-sudo env "NIX_CONFIG=sandbox-paths = /ccache=$CCACHE_HOST" nix build "$@"
+sudo env "NIX_CONFIG=sandbox-paths = /ccache=$CCACHE_HOST" \
+	nix build --option use-substituters false "$@"
