@@ -28,6 +28,8 @@ stdenv.mkDerivation {
       llvm/cmake/modules/AddLLVM.cmake
     sed -i 's|intrinsics_gen|intrinsics_gen\n  ClangDriverOptions|' \
       clang/lib/Interpreter/CMakeLists.txt
+    sed -i 's|numShards = 32;|numShards = 1;|' lld/*/SyntheticSections.*
+    sed -i 's|numShards = 256;|numShards = 1;|' lld/*/ICF.cpp
   '';
 
   preConfigure = ''
