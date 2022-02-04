@@ -7,7 +7,7 @@
 # your nix needs experimental-options = ca-derivations
 # and you need root access / to be a trusted user
 
-# example: ./build-using-ccache.sh -L '.#ccachedPackages.stdenv.musl'
+# example: ./build-using-ccache.sh musl -L
 
 set -ue
 
@@ -43,5 +43,16 @@ export CCACHE_BASEDIR="$(pwd)"
 EOF
 chmod +x $CCACHE_HOST/setup
 
+targets=()
+options=()
+while (( $# > 0 )); do
+	if [[ $1 =~ ^- ]]; then
+		options+=("$1")
+	else
+		targets+=(".#ccachedPackages.$1")
+	fi
+	shift
+done
 sudo env "NIX_CONFIG=sandbox-paths = /ccache=$CCACHE_HOST" \
-	nix build --option use-substituters false "$@"
+	nix build --option use-substituters false -o result-ccached \
+		"${targets[@]}" "${options[@]}"

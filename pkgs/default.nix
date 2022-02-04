@@ -61,6 +61,7 @@ let
     lib.makeOverridable ((lib.mkCallPackage (pkgs // _lib)) path);
 
   pkgs = {
+    inherit bootstrap-musl bootstrap-toolchain bootstrap-busybox;
     inherit stdenv;
     inherit (stdenv) musl clang busybox;
 
