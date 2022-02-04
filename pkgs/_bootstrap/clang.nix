@@ -87,6 +87,7 @@ in
           add_opt CLANG_DEFAULT_RTLIB=compiler-rt
           add_opt LIBCXX_HAS_MUSL_LIBC=YES
           add_opt LIBCXX_USE_COMPILER_RT=YES
+          add_opt LIBCXX_INCLUDE_BENCHMARKS=NO
           add_opt LIBCXXABI_USE_COMPILER_RT=YES
           add_opt LIBCXXABI_USE_LLVM_UNWINDER=YES
           add_opt LLVM_INSTALL_TOOLCHAIN_ONLY=YES
