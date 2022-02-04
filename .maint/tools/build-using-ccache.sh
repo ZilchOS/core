@@ -55,4 +55,5 @@ while (( $# > 0 )); do
 done
 sudo env "NIX_CONFIG=sandbox-paths = /ccache=$CCACHE_HOST" \
 	nix build --option use-substituters false -o result-ccached \
+		--option warn-dirty false \
 		"${targets[@]}" "${options[@]}"

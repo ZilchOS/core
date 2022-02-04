@@ -27,10 +27,9 @@ fi
 if [[ "$UPDATE" == 1 ]]; then mkdir -p .tmp; :> .tmp/out-$$; fi
 while IFS=" " read -r old_hash pkg; do
     if [[ "$USE_CCACHE" == 1 ]]; then
-	./.maint/tools/build-using-ccache.sh -o.tmp/res-$$ "$pkg" "$@" \
-	    2>/dev/null
+	./.maint/tools/build-using-ccache.sh -o.tmp/res-$$ "$pkg" "$@"
     else
-	nix build ".#$pkg" -o .tmp/res-$$ "$@" 2>/dev/null
+	nix build ".#$pkg" --option warn-dirty false -o .tmp/res-$$ "$@"
     fi
     new_hash=$(basename $(readlink .tmp/res-$$*))
     rm .tmp/res-$$*
