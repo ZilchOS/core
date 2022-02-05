@@ -1,4 +1,4 @@
-{ name ? "linux", stdenv, fetchurl, gnumake, flex, gnubison }:
+{ name ? "linux", stdenv, fetchurl, gnumake, flex, gnubison, zstd }:
 
 stdenv.mkDerivation {
   pname = name;
@@ -10,10 +10,7 @@ stdenv.mkDerivation {
     sha256 = "57b2cf6991910e3b67a1b3490022e8a0674b6965c74c12da1e99d138d1991ee8";
   };
 
-  buildInputs = [
-    gnumake
-    flex gnubison
-  ];
+  buildInputs = [ gnumake flex gnubison zstd ];
 
   patchPhase = ''
     sed -i 's|#!/usr/bin/awk|#!${stdenv.busybox}/bin/awk|' \
@@ -23,11 +20,11 @@ stdenv.mkDerivation {
   '';
 
   configurePhase = ''
-    export KBUILD_BUILD_TIMESTAMP=0
-    export KBUILD_USER=zilch
-    export KBUILD_HOST=zilchos.org
-    make LLVM=1 allnoconfig
-    make LLVM=1 kvm_guest.config
+    ./scripts/kconfig/merge_config.sh -n -m \
+      arch/x86/configs/tiny.config \
+      kernel/configs/kvm_guest.config \
+      ${./config}
+    make LLVM=1 KCONFIG_ALLCONFIG=.config allnoconfig
   '';
 
   buildPhase = ''
@@ -40,11 +37,10 @@ stdenv.mkDerivation {
     HOSTCC="$HOSTCC -idirafter $(pwd)/arch/x86/include/uapi"
     HOSTCC="$HOSTCC -idirafter $(pwd)/extra-headers"
 
-    export KBUILD_BUILD_TIMESTAMP=0
-    export KBUILD_USER=zilch
-    export KBUILD_HOST=zilchos.org
-
-    make -j $NPROC "HOSTCC=$HOSTCC" LLVM=1
+    make -j $NPROC "HOSTCC=$HOSTCC" LLVM=1 \
+      KBUILD_BUILD_USER=zilch \
+      KBUILD_BUILD_HOST=zilchos.org \
+      KBUILD_BUILD_TIMESTAMP=0
   '';
 
   installPhase = ''
