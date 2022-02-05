@@ -71,6 +71,7 @@ let
 
     gnum4 = callPackage ./linux/gnum4.nix {};
     flex = callPackage ./linux/flex.nix {};
+    gnubison = callPackage ./linux/gnubison.nix {};
 
     pkg-config = callPackage ./pkg-config.nix {};
 
