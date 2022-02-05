@@ -69,6 +69,8 @@ let
       gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
     };
 
+    gnum4 = callPackage ./linux/gnum4.nix {};
+
     pkg-config = callPackage ./pkg-config.nix {};
 
     curl = callPackage ./curl/curl.nix {};
