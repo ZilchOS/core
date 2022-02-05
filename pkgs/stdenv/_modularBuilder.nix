@@ -90,7 +90,7 @@ let
           export PKG_CONFIG_PATH="$(echo -n $PKG_CONFIG_PATH | head -c-1)"
         '';
 
-        patchFlags = [ "-p1" ] ++ extraConfigureFlags;
+        patchFlags = [ "-p1" ] ++ extraPatchFlags;
         configureFlags = [ "--prefix=$out" ] ++ extraConfigureFlags;
         buildFlags = [ "-j" "$NPROC" ] ++ extraBuildFlags;
 
