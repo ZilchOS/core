@@ -69,6 +69,7 @@ let
       gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
     };
 
+    linux = callPackage ./linux/linux.nix {};
     gnum4 = callPackage ./linux/gnum4.nix {};
     flex = callPackage ./linux/flex.nix {};
     gnubison = callPackage ./linux/gnubison.nix {};
