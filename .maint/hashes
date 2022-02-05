@@ -6,6 +6,7 @@ phajq9f1xvb2qd3phqcvra6qakd7r367 stdenv.clang.toolchain
 vfnkmspxv8mjny76yddd8y7ss5ivk4db stdenv.clang.sysroot
 15bh9s14s8qmdnfgl1120v0z2l9v5dn5 stdenv.busybox
 zm0yavnq27d481nxyxvg1g4k2amrh3pw gnum4
+5wsz2mb6hq787cqarxi7jbngxyzj9rv9 flex
 zfbf007ldvhr0nsf4274k0wfxvsxbk9f gnumake
 k5h6jvagb9m0dnkg1nqbnms21j9w3yns pkg-config
 y33pwh4jr0d4l1czd75c3jxvbgzhipdk curl
