@@ -19,7 +19,7 @@ if [[ "$SERIAL" != 1 ]]; then
     if [[ "$USE_CCACHE" == 1 ]]; then
 	./.maint/tools/build-using-ccache.sh --no-link $targets "$@"
     else
-	nix build --no-link $targets "$@"
+	nix build --option warn-dirty false --no-link $targets "$@"
     fi
 fi
 
