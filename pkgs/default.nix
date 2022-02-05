@@ -68,14 +68,15 @@ let
     gnumake = callPackage ./gnumake.nix {
       gnumake = _bootstrap.early-gnumake;  # a bit of a layering violation
     };
+    pkg-config = callPackage ./pkg-config.nix {};
+    zstd = callPackage ./zstd.nix {};
+
+    squashfs-tools-ng = callPackage ./live-cd/squashfs-tools-ng.nix {};
 
     linux = callPackage ./linux/linux.nix {};
     gnum4 = callPackage ./linux/gnum4.nix {};
     flex = callPackage ./linux/flex.nix {};
     gnubison = callPackage ./linux/gnubison.nix {};
-    zstd = callPackage ./linux/zstd.nix {};
-
-    pkg-config = callPackage ./pkg-config.nix {};
 
     curl = callPackage ./curl/curl.nix {};
     mbedtls = callPackage ./curl/mbedtls.nix {};

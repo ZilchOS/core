@@ -21,6 +21,9 @@ stdenv.mkDerivation {
     "CFLAGS='-O3 -I${stdenv.clang.sysroot}/include/clang'"
   ];
   installPhase = "make install PREFIX=$out";
+  postInstall = ''
+    sed -i "s|^prefix=.*|prefix=$out|" $out/lib/pkgconfig/libzstd.pc
+  '';
 
   allowedRequisites = [ "out" stdenv.musl ];
   allowedReferences = [ "out" stdenv.musl ];
