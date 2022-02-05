@@ -19,7 +19,10 @@ stdenv.mkDerivation {
   prePatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure build-aux/install-sh
   '';
-  extraConfigureFlags = [ "--disable-dependency-tracking" ];
+  extraConfigureFlags = [
+    "--disable-dependency-tracking"
+    "--with-syscmd-shell=${stdenv.busybox}/bin/ash"
+  ];
 
   allowedRequisites = [ "out" stdenv.musl stdenv.busybox ];
   allowedReferences = [ "out" stdenv.musl stdenv.busybox ];
