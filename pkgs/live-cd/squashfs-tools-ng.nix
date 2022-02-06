@@ -24,6 +24,10 @@ stdenv.mkDerivation {
     "--with-zstd"
   ];
 
+  postInstall = ''
+    ${stdenv.patchelf}/bin/patchelf --add-rpath ${zstd}/lib $out/bin/*
+  '';
+
   allowedRequisites = [ "out" stdenv.musl zstd ];
   allowedReferences = [ "out" stdenv.musl zstd ];
 }

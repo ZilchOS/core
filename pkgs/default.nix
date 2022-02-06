@@ -71,8 +71,6 @@ let
     pkg-config = callPackage ./pkg-config.nix {};
     zstd = callPackage ./zstd.nix {};
 
-    squashfs-tools-ng = callPackage ./live-cd/squashfs-tools-ng.nix {};
-
     linux = callPackage ./linux/linux.nix {};
     gnum4 = callPackage ./linux/gnum4.nix {};
     flex = callPackage ./linux/flex.nix {};
@@ -99,6 +97,9 @@ let
     editline = callPackage ./nix/editline.nix {};
     libsodium = callPackage ./nix/libsodium.nix {};
     libarchive = callPackage ./nix/libarchive.nix {};
+
+    squashfs-tools-ng = callPackage ./live-cd/squashfs-tools-ng.nix {};
+    iso = callPackage ./live-cd/iso.nix {};
   };
 
 in pkgs

@@ -1,1 +1,38 @@
+# General setup
 CONFIG_KERNEL_ZSTD=y
+CONFIG_DEFAULT_INIT="/bin/init"
+CONFIG_DEFAULT_HOSTNAME="zilchos"
+
+CONFIG_64BIT=y
+
+# Executable file formats
+CONFIG_BINFMT_ELF=y
+CONFIG_BINFMT_SCRIPT=y
+CONFIG_BINFMT_MISC=y
+
+# Generic Driver Options
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+
+# File systems
+CONFIG_OVERLAY_FS=y
+
+# CD-ROM/DVD Filesystems
+CONFIG_ISO9660_FS=y
+CONFIG_JOLIET=y
+CONFIG_ZISOFS=y
+
+# Pseudo filesystems
+CONFIG_TMPFS=y
+CONFIG_MISC_FILESYSTEMS=y
+CONFIG_SQUASHFS=y
+CONFIG_SQUASHFS_ZSTD=y
+CONFIG_SQUASHFS_DECOMP_MULTI=y
+CONFIG_SQUASHFS_FILE_DIRECT=y
+
+# Kernel Testing and Coverage
+CONFIG_UNWINDER_FRAME_POINTER=y
+# so that
+# CONFIG_UNWINDER_ORC is not set
+# CONFIG_STACK_VALIDATION is not set
+# objtool is not required, and the enourmous deptree of elfutils is not packaged
