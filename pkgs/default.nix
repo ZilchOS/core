@@ -98,8 +98,14 @@ let
     libsodium = callPackage ./nix/libsodium.nix {};
     libarchive = callPackage ./nix/libarchive.nix {};
 
-    squashfs-tools-ng = callPackage ./live-cd/squashfs-tools-ng.nix {};
-    iso = callPackage ./live-cd/iso.nix {};
+    live-cd = callPackage ./live-cd/live-cd.nix {};
+    nasm = callPackage ./live-cd/nasm.nix {};
+    gnubinutils = callPackage ./live-cd/gnubinutils.nix {};
+    gnumtools = callPackage ./live-cd/gnumtools.nix {};
+    limine = callPackage ./live-cd/limine.nix {};
+    gnuxorriso = callPackage ./live-cd/gnuxorriso.nix {
+      linux-headers = _bootstrap.early-linux-headers;
+    };
   };
 
 in pkgs

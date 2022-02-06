@@ -2,7 +2,7 @@
 
 ## What
 
-An intentionally minimal **Linux** distribution based on **Nix**,
+An minimal viable **Linux** distribution based on **Nix**,
 **musl**, **clang** and **busybox**.
 (well, not yet, but give it a bit of time).
 
@@ -25,7 +25,8 @@ Yeah, maybe not, but here's a toy Nix-based OS to play with anyway.
 * be lean enough to experiment on
 * avoid GNU software where possible
   (build-time dependencies of the 5 key packages are allowed,
-   but not as runtime dependencies)
+   but not as runtime dependencies;
+   the current situation is particularly bad in the bootloader area)
 * force t184256 to learn more Nix-lang and nixpkgs idioms
 * give content-addressed Nix a spin
 * have [a decent bootstrap seed/path](https://github.com/t184256/bootstrap-from-tcc)
@@ -34,8 +35,8 @@ Yeah, maybe not, but here's a toy Nix-based OS to play with anyway.
 ## Non-goals (Core)
 
 * competing with NixOS
+* going beyond a Live CD
 * systemd
-* bootloaders
 * any software, basically
 * flexibility (other than just being small)
 * portability

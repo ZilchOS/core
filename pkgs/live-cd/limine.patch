@@ -1,0 +1,96 @@
+diff --git a/GNUmakefile.in b/GNUmakefile.in
+index 334f7c6..defb35f 100644
+--- a/GNUmakefile.in
++++ b/GNUmakefile.in
+@@ -142,12 +142,14 @@ limine-bios: common-bios decompressor
+ limine-eltorito-efi:
+ 	mkdir -p '$(call SHESCAPE,$(BINDIR))'
+ 	dd if=/dev/zero of='$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' bs=512 count=2880 2>/dev/null
+-	( mformat -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' -f 1440 :: && \
++	( mformat -N 01c40200 -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' -f 1440 :: && \
+ 	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' ::/EFI && \
+ 	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' ::/EFI/BOOT && \
+ 	  ( ( [ -f '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ] && \
++	      touch -d 1970-01-01 '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' && \
+ 	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ::/EFI/BOOT ) || true ) && \
+ 	  ( ( [ -f '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ] && \
++	      touch -d 1970-01-01 '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' && \
+ 	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ::/EFI/BOOT ) || true ) \
+ 	) || rm -f '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin'
+ 
+diff --git a/common/GNUmakefile b/common/GNUmakefile
+index 29a4a1e..bd82da0 100644
+--- a/common/GNUmakefile
++++ b/common/GNUmakefile
+@@ -228,7 +228,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine.sys: $(call MKESCAPE,$(BUILDDIR))/limine.elf
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker_stage2only.ld: linker_bios.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P -DLINKER_STAGE2ONLY linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_stage2only.ld'
++	$(LIMINE_CC) -x c -E -P -DLINKER_STAGE2ONLY linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_stage2only.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine_stage2only.elf: $(OBJ)
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker_stage2only.ld'
+@@ -238,7 +238,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine_stage2only.elf: $(OBJ)
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker_nomap.ld: linker_bios.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
++	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/stage2.map.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
+@@ -246,7 +246,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(OBJ) $(call MKESCAPE,$(BUILDDIR
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker.ld: linker_bios.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
++	$(LIMINE_CC) -x c -E -P linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine.elf: $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/stage2.map.o $(call MKESCAPE,$(BUILDDIR))/full.map.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
+@@ -261,7 +261,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine.elf: $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tin
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker_dbg.ld: linker_bios.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P -DLINKER_DBG linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_dbg.ld'
++	$(LIMINE_CC) -x c -E -P -DLINKER_DBG linker_bios.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_dbg.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine_dbg.elf: $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/stage2.map.o $(call MKESCAPE,$(BUILDDIR))/full.map.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker_dbg.ld'
+@@ -298,7 +298,7 @@ reduced-gnu-efi: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker_nomap.ld: linker_uefi64.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_uefi64.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
++	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_uefi64.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/crt0-efi-x86_64.o $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/libgnuefi.a $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
+@@ -308,7 +308,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(call MKESCAPE,$(BUILDDIR))/redu
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker.ld: linker_uefi64.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P linker_uefi64.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
++	$(LIMINE_CC) -x c -E -P linker_uefi64.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine.elf: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/crt0-efi-x86_64.o $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/libgnuefi.a $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/full.map.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
+@@ -343,7 +343,7 @@ reduced-gnu-efi: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker_nomap.ld: linker_uefi32.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_uefi32.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
++	$(LIMINE_CC) -x c -E -P -DLINKER_NOMAP linker_uefi32.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/crt0-efi-ia32.o $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/libgnuefi.a $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker_nomap.ld'
+@@ -353,7 +353,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine_nomap.elf: $(call MKESCAPE,$(BUILDDIR))/redu
+ 
+ $(call MKESCAPE,$(BUILDDIR))/linker.ld: linker_uefi32.ld.in
+ 	mkdir -p '$(call SHESCAPE,$(BUILDDIR))'
+-	$(LIMINE_CC) -x c -E -P linker_uefi32.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
++	$(LIMINE_CC) -x c -E -P linker_uefi32.ld.in -o '$(call SHESCAPE,$(BUILDDIR))/linker.ld' -Ui386
+ 
+ $(call MKESCAPE,$(BUILDDIR))/limine.elf: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/crt0-efi-ia32.o $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/libgnuefi.a $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/full.map.o
+ 	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker.ld'

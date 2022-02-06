@@ -45,7 +45,7 @@ stdenv.mkDerivation {
     make -j $NPROC "HOSTCC=$HOSTCC" LLVM=1 \
       KBUILD_BUILD_USER=zilch \
       KBUILD_BUILD_HOST=zilchos.org \
-      KBUILD_BUILD_TIMESTAMP=19700101000000
+      KBUILD_BUILD_TIMESTAMP=1970-01-01
   '';
 
   installPhase = ''
