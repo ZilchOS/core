@@ -28,18 +28,43 @@ in
       exec setsid cttyhack ash
       EOF
       chmod +x $initscript
+      touch -d @0 $initscript
 
-      mkdir initrd
-      mkdir initrd/dev initrd/proc initrd/sys
-      mkdir initrd/boot
-      cp $initscript initrd/boot/rdinit
-      mkdir -p initrd/nix/store
-      cp -r ${musl} initrd/nix/store/
-      cp -r ${busybox} initrd/nix/store/
+      cat > packlist <<EOF
+      dir  /boot                    0550 0 0
+      file /boot/rdinit $initscript 0550 0 0
+      dir  /dev                     0555 0 0
+      dir  /proc                    0555 0 0
+      dir  /sys                     0555 0 0
+      dir  /root                    0550 0 0
+      dir  /nix                     0555 0 0
+      dir  /nix/store               0555 0 0
+      EOF
+      included='${musl} ${busybox}'
+      for derivation in $included; do
+        find $derivation -type d | sort > dirlist
+        while IFS= read -r dir || [ -n "$dir" ]; do
+          mode=$(stat -c %a "$dir")
+          echo "dir $dir $mode 0 0" >> packlist
+        done < dirlist
+        find $derivation -type f | sort > filelist
+        while IFS= read -r file || [ -n "$file" ]; do
+          mode=$(stat -c %a "$file")
+          echo "file $file $file $mode 0 0" >> packlist
+        done < filelist
+        find $derivation -type l | sort > linklist
+        while IFS= read -r link || [ -n "$link" ]; do
+          mode=$(stat -c %a "$link")
+          target=$(readlink "$link")
+          echo "slink $link $target $mode 0 0" >> packlist
+        done < linklist
+      done
+      # TODO: perform hardlinking optimization on /nix/store?
+      cat packlist
 
-      cd initrd
-      find . | cpio --quiet -H newc -o | ${zstd}/bin/zstd -22 > $initrd
-      cd ..
+      ${linux.initramfs_utils}/gen_init_cpio -t0 packlist > uncompressed.cpio
+      ${zstd}/bin/zstd -22 < uncompressed.cpio > $initrd
+      touch -d @0 $initrd
 
       cat > $limine_config <<EOF
       TIMEOUT=1
@@ -63,7 +88,9 @@ in
       cp ${limine}/share/limine/limine.sys isoroot/boot/
       cp ${limine}/share/limine/limine-cd.bin isoroot/boot/
       cp ${limine}/share/limine/limine-eltorito-efi.bin isoroot/boot/
+      find isoroot | xargs touch -d @0
 
+      SOURCE_DATE_EPOCH=0 \
       ${gnuxorriso}/bin/xorriso \
         -as mkisofs \
         -b boot/limine-cd.bin \
