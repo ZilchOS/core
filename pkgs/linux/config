@@ -22,6 +22,10 @@ CONFIG_OVERLAY_FS=y
 # Pseudo filesystems
 CONFIG_TMPFS=y
 
+# Input Device Drivers
+CONFIG_INPUT_KEYBOARD=y
+CONFIG_KEYBOARD_ATKBD=y
+
 # Kernel Testing and Coverage
 CONFIG_UNWINDER_FRAME_POINTER=y
 # so that
