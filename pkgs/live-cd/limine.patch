@@ -1,8 +1,17 @@
 diff --git a/GNUmakefile.in b/GNUmakefile.in
-index 334f7c6..defb35f 100644
+index 334f7c6..937782e 100644
 --- a/GNUmakefile.in
 +++ b/GNUmakefile.in
-@@ -142,12 +142,14 @@ limine-bios: common-bios decompressor
+@@ -73,7 +73,7 @@ export LIMINE_VERSION
+ override LIMINE_COPYRIGHT := $(shell $(GREP) Copyright '$(call SHESCAPE,$(SRCDIR))/LICENSE.md')
+ export LIMINE_COPYRIGHT
+ 
+-override STAGE1_FILES := $(shell find '$(call SHESCAPE,$(SRCDIR))/stage1' -type f -name '*.asm')
++override STAGE1_FILES := $(shell find '$(call SHESCAPE,$(SRCDIR))/stage1' -type f -name '*.asm' | sort)
+ 
+ .PHONY: all
+ all: limine-uefi limine-bios
+@@ -142,13 +142,15 @@ limine-bios: common-bios decompressor
  limine-eltorito-efi:
  	mkdir -p '$(call SHESCAPE,$(BINDIR))'
  	dd if=/dev/zero of='$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' bs=512 count=2880 2>/dev/null
@@ -11,17 +20,50 @@ index 334f7c6..defb35f 100644
  	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' ::/EFI && \
  	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' ::/EFI/BOOT && \
  	  ( ( [ -f '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ] && \
-+	      touch -d 1970-01-01 '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' && \
- 	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ::/EFI/BOOT ) || true ) && \
+-	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ::/EFI/BOOT ) || true ) && \
++	  touch -d @0 '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' && \
++	      mcopy -m -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi64/BOOTX64.EFI' ::/EFI/BOOT ) || true ) && \
  	  ( ( [ -f '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ] && \
-+	      touch -d 1970-01-01 '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' && \
- 	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ::/EFI/BOOT ) || true ) \
+-	      mcopy -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ::/EFI/BOOT ) || true ) \
++	      touch -d @0 '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' && \
++	      mcopy -m -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ::/EFI/BOOT ) || true ) \
  	) || rm -f '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin'
  
+ .PHONY: limine-uefi
 diff --git a/common/GNUmakefile b/common/GNUmakefile
-index 29a4a1e..bd82da0 100644
+index 29a4a1e..561b11e 100644
 --- a/common/GNUmakefile
 +++ b/common/GNUmakefile
+@@ -151,22 +151,22 @@ endif
+ 
+ .PHONY: all clean
+ 
+-override C_FILES := $(shell find ./ -type f -name '*.c')
++override C_FILES := $(shell find ./ -type f -name '*.c' | sort)
+ ifeq ($(TARGET), bios)
+-override ASM32_FILES := $(shell find ./ -type f -name '*.asm32')
+-override ASMB_FILES := $(shell find ./ -type f -name '*.asmb')
++override ASM32_FILES := $(shell find ./ -type f -name '*.asm32' | sort)
++override ASMB_FILES := $(shell find ./ -type f -name '*.asmb' | sort)
+ 
+ override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(ASM32_FILES:.asm32=.o) $(ASMB_FILES:.asmb=.o) $(C_FILES:.c=.o))
+ endif
+ ifeq ($(TARGET), uefi64)
+-override ASM64_FILES := $(shell find ./ -type f -name '*.asm64')
+-override ASM64U_FILES := $(shell find ./ -type f -name '*.asm64u')
++override ASM64_FILES := $(shell find ./ -type f -name '*.asm64' | sort)
++override ASM64U_FILES := $(shell find ./ -type f -name '*.asm64u' | sort)
+ 
+ override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(ASM64_FILES:.asm64=.o) $(ASM64U_FILES:.asm64u=.o) $(C_FILES:.c=.o))
+ endif
+ ifeq ($(TARGET), uefi32)
+-override ASM32_FILES := $(shell find ./ -type f -name '*.asm32')
+-override ASM32U_FILES := $(shell find ./ -type f -name '*.asm32u')
++override ASM32_FILES := $(shell find ./ -type f -name '*.asm32' | sort)
++override ASM32U_FILES := $(shell find ./ -type f -name '*.asm32u' | sort)
+ 
+ override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(ASM32_FILES:.asm32=.o) $(ASM32U_FILES:.asm32u=.o) $(C_FILES:.c=.o))
+ endif
 @@ -228,7 +228,7 @@ $(call MKESCAPE,$(BUILDDIR))/limine.sys: $(call MKESCAPE,$(BUILDDIR))/limine.elf
  
  $(call MKESCAPE,$(BUILDDIR))/linker_stage2only.ld: linker_bios.ld.in
@@ -94,3 +136,31 @@ index 29a4a1e..bd82da0 100644
  
  $(call MKESCAPE,$(BUILDDIR))/limine.elf: $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/crt0-efi-ia32.o $(call MKESCAPE,$(BUILDDIR))/reduced-gnu-efi/gnuefi/libgnuefi.a $(OBJ) $(call MKESCAPE,$(BUILDDIR))/tinf/tinfgzip.o $(call MKESCAPE,$(BUILDDIR))/tinf/tinflate.o $(call MKESCAPE,$(BUILDDIR))/font.o $(call MKESCAPE,$(BUILDDIR))/sys/smp_trampoline.o $(call MKESCAPE,$(BUILDDIR))/full.map.o
  	$(MAKE) '$(call SHESCAPE,$(BUILDDIR))/linker.ld'
+diff --git a/common/gensyms.sh b/common/gensyms.sh
+index 047522c..4a177ef 100755
+--- a/common/gensyms.sh
++++ b/common/gensyms.sh
+@@ -5,7 +5,7 @@ set -e
+ LC_ALL=C
+ export LC_ALL
+ 
+-TMP0=$(mktemp)
++TMP0=.tmp0
+ 
+ cat >"$TMP0" <<EOF
+ #! /bin/sh
+@@ -21,10 +21,10 @@ chmod +x "$TMP0"
+ 
+ rm "$TMP0"
+ 
+-TMP1=$(mktemp)
+-TMP2=$(mktemp)
+-TMP3=$(mktemp)
+-TMP4=$(mktemp)
++TMP1=.tmp1
++TMP2=.tmp2
++TMP3=.tmp3
++TMP4=.tmp4
+ 
+ "$LIMINE_OBJDUMP" -t "$1" | ( "$SED" '/[[:<:]]d[[:>:]]/d' 2>/dev/null || "$SED" '/\bd\b/d' ) | sort > "$TMP1"
+ "$GREP" "\.text" < "$TMP1" | cut -d' ' -f1 > "$TMP2"

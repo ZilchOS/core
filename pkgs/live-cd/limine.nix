@@ -15,18 +15,18 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake nasm gnubinutils gnumtools ];
 
-  prePatch = ''
+  patches = [ ./limine.patch ];
+
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure make_toolchain.sh common/gensyms.sh
     #sed -i 's|Free Software Foundation||' configure
   '';
 
-  patches = [ ./limine.patch ];
-
   buildPhase = ''
     export SOURCE_DATE_EPOCH=0
-    make -j $NPROC
- '';
+    make
+  '';
 
   allowedRequisites = [ "out" stdenv.musl ];
   allowedReferences = [ "out" stdenv.musl ];
