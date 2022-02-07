@@ -9,7 +9,12 @@ in
   mkCaDerivation {
     name = "ZilchOS-core-live-cd-${version}";
 
-    outputs = [ "iso" "initscript" "initrd" "limine_config" ];
+    outputs = [
+      "iso"
+      "initrd"
+      "limine_config"
+      "initscript"
+    ];
 
     builder = "${busybox}/bin/ash";
     args = [ "-uexc" ''
@@ -24,7 +29,7 @@ in
       mount -t proc proc /proc
       mount -t sysfs sysfs /sys
       mkdir /dev/pts; mount -t devpts none /dev/pts -o mode=620
-      setsid ash -c 'getty 0 /dev/tty0 &'
+      setsid ash -c 'getty -n -l ${busybox}/bin/ash 0 /dev/tty0 &'
       exec setsid cttyhack ash
       EOF
       chmod +x $initscript
