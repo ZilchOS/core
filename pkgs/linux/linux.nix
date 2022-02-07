@@ -10,7 +10,7 @@ stdenv.mkDerivation {
     sha256 = "57b2cf6991910e3b67a1b3490022e8a0674b6965c74c12da1e99d138d1991ee8";
   };
 
-  outputs = [ "kernel" "config" "initramfs_utils" ];
+  outputs = [ "kernel" "config" "gen_init_cpio" ];
 
   buildInputs = [ gnumake flex gnubison zstd ];
 
@@ -18,7 +18,7 @@ stdenv.mkDerivation {
     sed -i 's|#!/usr/bin/awk|#!${stdenv.busybox}/bin/awk|' \
       scripts/*.sh scripts/*/*.sh
     sed -i 's|#!/bin/sh|#!${stdenv.busybox}/bin/ash|' \
-      scripts/remove-stale-files usr/gen_initramfs.sh \
+      scripts/remove-stale-files \
       scripts/*.sh scripts/*/*.sh
   '';
 
@@ -53,11 +53,9 @@ stdenv.mkDerivation {
     find|grep -i bzimage
     cat arch/x86/boot/bzImage > $kernel
     cat .config > $config
-    mkdir $initramfs_utils
-    sed -i 's|usr/gen_init_cpio|echo gen_init_cpio|' usr/gen_initramfs.sh
-    cp usr/gen_init_cpio usr/gen_initramfs.sh $initramfs_utils/
+    cp usr/gen_init_cpio $gen_init_cpio
   '';
 
-  allowedRequisites = [ stdenv.musl stdenv.busybox ];  # initramfs_utils
-  allowedReferences = [ stdenv.musl stdenv.busybox ];  # initramfs_utils
+  allowedRequisites = [ stdenv.musl ];  # gen_init_cpio
+  allowedReferences = [ stdenv.musl ];  # gen_init_cpio
 }

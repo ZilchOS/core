@@ -62,7 +62,7 @@ in
       # TODO: perform hardlinking optimization on /nix/store?
       cat packlist
 
-      ${linux.initramfs_utils}/gen_init_cpio -t0 packlist > uncompressed.cpio
+      ${linux.gen_init_cpio} -t0 packlist > uncompressed.cpio
       ${zstd}/bin/zstd -22 < uncompressed.cpio > $initrd
       touch -d @0 $initrd
 
