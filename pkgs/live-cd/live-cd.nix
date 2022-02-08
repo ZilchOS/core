@@ -4,7 +4,7 @@
 , zstd, limine, gnuxorriso }:
 
 let
-  version = "2022.02.1";
+  version = "2022.02.2";
 in
   mkCaDerivation {
     name = "ZilchOS-core-live-cd-${version}";
