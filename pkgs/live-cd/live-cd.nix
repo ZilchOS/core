@@ -76,7 +76,7 @@ in
       VERBOSE=yes
       GRAPHICS=no
 
-      : ZilchOS ${version}
+      : ZilchOS Core ${version}
       PROTOCOL=linux
       KERNEL_PATH=boot:///vmlinuz
       MODULE_PATH=boot:///initrd
