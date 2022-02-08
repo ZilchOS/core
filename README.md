@@ -1,5 +1,14 @@
 # ZilchOS Core
 
+## Try
+
+Download an image from releases,
+`qemu-system-x86_64 -cdrom ZilchOS-core-*.iso`.
+
+`-nographic` can be specified
+to pop up no windows and use a serial port instead,
+press `Control-a` followed by an `x` to quit.
+
 ## What
 
 An minimal viable **Linux** distribution based on **Nix**,
