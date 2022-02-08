@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake mbedtls ca-bundle ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure install-sh
   '';

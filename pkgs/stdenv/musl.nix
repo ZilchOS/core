@@ -12,7 +12,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ stdenv.clang stdenv.busybox gnumake ];
 
-  prePatch = ''
+  postPatch = ''
       sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' tools/*.sh configure
       # patch popen/system to search in PATH instead of hardcoding /bin/sh
       sed -i 's|posix_spawn(&pid, "/bin/sh",|posix_spawnp(\&pid, "sh",|' \

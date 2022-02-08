@@ -24,7 +24,7 @@ in
       brotli seccomp lowdown
     ];
 
-    prePatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
+    postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
 
     configurePhase = ''
       mkdir stubs; export PATH="$PATH:$(pwd)/stubs"

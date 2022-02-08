@@ -12,7 +12,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
             configure glib/configure install-sh glib/install-sh
   '';

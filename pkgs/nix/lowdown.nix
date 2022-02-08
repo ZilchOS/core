@@ -18,7 +18,7 @@ stdenv.mkDerivation {
 
   patches = [ ./lowdown-shared.patch ];
 
-  prePatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
+  postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
   configurePhase = "./configure PREFIX=$out";
 
   #fixupPhase = "";

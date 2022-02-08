@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   buildInputs = [ stdenv.busybox gnumake cmake python ];
                 # stdenv.clang not added to PATH on purpose to avoid confusion
 
-  prePatch = ''
+  postPatch = ''
     sed -i "s|COMMAND sh|COMMAND ${stdenv.busybox}/bin/ash|" \
       llvm/cmake/modules/GetHostTriple.cmake clang/CMakeLists.txt
     echo 'echo x86_64-unknown-linux-musl' > llvm/cmake/config.guess

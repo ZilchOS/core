@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
             configure missing install-sh mkinstalldirs
     # see libtool's 74c8993c178a1386ea5e2363a01d919738402f30

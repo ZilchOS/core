@@ -14,7 +14,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake flex gnubison zstd ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|#!/usr/bin/awk|#!${stdenv.busybox}/bin/awk|' \
       scripts/*.sh scripts/*/*.sh
     sed -i 's|#!/bin/sh|#!${stdenv.busybox}/bin/ash|' \

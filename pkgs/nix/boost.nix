@@ -17,7 +17,7 @@ stdenv.mkDerivation {
 
   outputs = [ "all" "headers" "nixRuntimeMini" ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       bootstrap.sh tools/build/src/engine/build.sh
     sed -i 's|/bin/sh|sh|' \

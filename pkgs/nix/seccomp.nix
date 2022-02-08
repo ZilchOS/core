@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake gnugperf ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure build-aux/install-sh
   '';

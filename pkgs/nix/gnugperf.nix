@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  prePatch = ''
+  postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure lib/configure src/configure tests/configure doc/configure \
       Makefile.in src/Makefile.in doc/Makefile.in

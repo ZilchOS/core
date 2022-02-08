@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ stdenv.clang stdenv.busybox gnumake ];
 
-  prePatch = ''
+  postPatch = ''
     echo -e '#!${stdenv.busybox}/bin/ash\nprintf 9999' \
       > scripts/gcc-version.sh
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|g' \

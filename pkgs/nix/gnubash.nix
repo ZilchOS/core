@@ -15,7 +15,7 @@ stdenv.mkDerivation {
 
   buildInputs = [ gnumake ];
 
-  prePatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
+  postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
   extraConfigureFlags = [ "--without-bash-malloc" ];
 
   # TODO: why so many
