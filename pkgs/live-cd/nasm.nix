@@ -18,8 +18,10 @@ stdenv.mkDerivation {
   postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure autoconf/helpers/install-sh
+    mv nasmlib/ver.c nasmlib/ver.c.ref
+    sed 's|__DATE__|"Jan  1 1970"|' < nasmlib/ver.c.ref > nasmlib/ver.c
+    touch -r nasmlib/ver.c.ref nasmlib/ver.c
   '';
-  #extraConfigureFlags = [ "--without-bash-malloc" ];
 
   allowedRequisites = [ "out" stdenv.musl ];
   allowedReferences = [ "out" stdenv.musl ];
