@@ -15,4 +15,4 @@ fi
 
 qemu-system-x86_64 --accel kvm -m 512 -cdrom .tmp/live-cd-$$-iso "$@"
 
-rm .tmp/live-cd-$$* .tmp/linux-$$-*
+rm .tmp/live-cd-$$*
