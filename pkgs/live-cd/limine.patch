@@ -1,8 +1,14 @@
+commit 323109b8a40c929bbd2978a658965d7d0ec3587f
+Author: Alexander Sosedkin <monk@unboiled.info>
+Date:   Fri Feb 11 20:10:13 2022 +0100
+
+    WIP: assorted reproducibility fixes
+
 diff --git a/GNUmakefile.in b/GNUmakefile.in
-index 334f7c6..937782e 100644
+index 7d946c2..2083aa9 100644
 --- a/GNUmakefile.in
 +++ b/GNUmakefile.in
-@@ -73,7 +73,7 @@ export LIMINE_VERSION
+@@ -72,7 +72,7 @@ export LIMINE_VERSION
  override LIMINE_COPYRIGHT := $(shell $(GREP) Copyright '$(call SHESCAPE,$(SRCDIR))/LICENSE.md')
  export LIMINE_COPYRIGHT
  
@@ -11,8 +17,8 @@ index 334f7c6..937782e 100644
  
  .PHONY: all
  all: limine-uefi limine-bios
-@@ -142,13 +142,15 @@ limine-bios: common-bios decompressor
- limine-eltorito-efi:
+@@ -138,13 +138,15 @@ limine-eltorito-efi:
+ ifneq ($(BUILD_ELTORITO_EFI), no)
  	mkdir -p '$(call SHESCAPE,$(BINDIR))'
  	dd if=/dev/zero of='$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' bs=512 count=2880 2>/dev/null
 -	( mformat -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' -f 1440 :: && \
@@ -28,8 +34,8 @@ index 334f7c6..937782e 100644
 +	      touch -d @0 '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' && \
 +	      mcopy -m -D o -i '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin' '$(call SHESCAPE,$(BUILDDIR))/common-uefi32/BOOTIA32.EFI' ::/EFI/BOOT ) || true ) \
  	) || rm -f '$(call SHESCAPE,$(BINDIR))/limine-eltorito-efi.bin'
+ endif
  
- .PHONY: limine-uefi
 diff --git a/common/GNUmakefile b/common/GNUmakefile
 index 29a4a1e..561b11e 100644
 --- a/common/GNUmakefile

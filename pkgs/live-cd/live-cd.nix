@@ -75,6 +75,7 @@ in
       TIMEOUT=1
       VERBOSE=yes
       GRAPHICS=no
+      SERIAL=yes
 
       : ZilchOS Core ${version}
       PROTOCOL=linux
@@ -82,7 +83,6 @@ in
       MODULE_PATH=boot:///initrd
       CMDLINE=rdinit=/boot/rdinit root=/dev/ram0 console=tty0 console=ttyS0
       TEXTMODE=yes
-      RESOLUTION=1024x768
       EOF
 
       mkdir isoroot
