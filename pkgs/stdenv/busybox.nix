@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   inherit pname;
-  version = "1.35.0";
+  version = "1.36.1";
 
   src = fetchurl {
-    # local = /downloads/busybox-1.35.0.tar.bz2;
-    url = "https://busybox.net/downloads/busybox-1.35.0.tar.bz2";
-    sha256 = "faeeb244c35a348a334f4a59e44626ee870fb07b6884d68c10ae8bc19f83a694";
+    # local = /downloads/busybox-1.36.1.tar.bz2;
+    url = "https://busybox.net/downloads/busybox-1.36.1.tar.bz2";
+    sha256 = "b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314";
   };
 
   buildInputs = [ stdenv.clang stdenv.busybox gnumake ];
