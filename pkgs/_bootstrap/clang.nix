@@ -92,11 +92,13 @@ in
           add_opt LIBCXXABI_USE_LLVM_UNWINDER=YES
           add_opt LLVM_INSTALL_TOOLCHAIN_ONLY=YES
           add_opt LIBUNWIND_USE_COMPILER_RT=YES
-          add_opt CMAKE_CXX_FLAGS=-I$EXTRA_INCL
         cmake -S llvm -B build -G 'Unix Makefiles' \
           -DLLVM_ENABLE_PROJECTS='clang;lld' \
           -DLLVM_ENABLE_RUNTIMES='compiler-rt;libcxx;libcxxabi;libunwind' \
+          -DBOOTSTRAP_CMAKE_CXX_FLAGS="-I$EXTRA_INCL -D_LARGEFILE64_SOURCE" \
+          -DCMAKE_CXX_FLAGS="-I$EXTRA_INCL -D_LARGEFILE64_SOURCE" \
           -DCLANG_ENABLE_BOOTSTRAP=YES $BOTH_STAGES_OPTS
+          # TODO: remove _LARGEFILE64_SOURCE on update
       # build:
         make SHELL=$SHELL -C build -j $NPROC clang  # runs OK in parallel
         make SHELL=$SHELL -C build runtimes-configure  # sometimes explodes,

@@ -69,7 +69,7 @@ stdenv.mkDerivation {
       -DLLVM_ENABLE_PROJECTS='clang;lld' \
       -DLLVM_ENABLE_RUNTIMES='compiler-rt;libcxx;libcxxabi;libunwind' \
       -DCMAKE_C_FLAGS="--sysroot=$(pwd)/sysroot" \
-      -DCMAKE_CXX_FLAGS="--sysroot=$(pwd)/sysroot -I$KHDR -I$EXTRA_INCL" \
+      -DCMAKE_CXX_FLAGS="--sysroot=$(pwd)/sysroot -I$KHDR -I$EXTRA_INCL -D_LARGEFILE64_SOURCE" \
       -DCMAKE_C_LINK_FLAGS="-Wl,--dynamic-linker=$LOADER" \
       -DCMAKE_CXX_LINK_FLAGS="-Wl,--dynamic-linker=$LOADER" \
       -DLLVM_BUILD_LLVM_DYLIB=YES \
@@ -113,7 +113,7 @@ stdenv.mkDerivation {
       -DLIBCXXABI_USE_LLVM_UNWINDER=YES \
       -DLLVM_INSTALL_TOOLCHAIN_ONLY=YES \
       -DLIBUNWIND_USE_COMPILER_RT=YES
-  '';
+  '';  # TODO: remove _LARGEFILE64_SOURCE on update
 
   buildPhase = ''
     export SHELL=${stdenv.busybox}/bin/ash
