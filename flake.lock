@@ -2,11 +2,11 @@
   "nodes": {
     "bootstrap-from-tcc": {
       "locked": {
-        "lastModified": 1691670648,
-        "narHash": "sha256-MIiJa8s9lA3AHcfKMRyMBC5xY7E9E/TK0wLR+XMSdXg=",
+        "lastModified": 1691705223,
+        "narHash": "sha256-/sbOfoYdLz28+0yOdvI5lbAME7PkxvZ03x+KlKj00aI=",
         "owner": "ZilchOS",
         "repo": "bootstrap-from-tcc",
-        "rev": "cf00399fc3c994e0f3dea1b5e9b52828c2108c8d",
+        "rev": "73021bdf40eb70a4217de490740b67b46163d00f",
         "type": "github"
       },
       "original": {

@@ -1,6 +1,6 @@
 nx2gxskz80g5m4vln7yqj12sv1avy0js bootstrap-musl
 480cg5sgzqh2nfpaqskyvn8xcpzbg59k bootstrap-toolchain
-79zvl5ybkh34c3a0f7filfdsdwjafh4b bootstrap-busybox
+pndjp0cg9l7xjd6clnbf36kl5l5l1pax bootstrap-busybox
 hdq429n0gwy5jn8q2x6v6gk9525kwac6 stdenv.musl
 w5ni3cs1pv1i61vl2pvq7r6mp0p5k2hw stdenv.clang^toolchain
 qr53zyz1s7iqmqnvh35xfbj9rgbvx5x5 stdenv.clang^sysroot
