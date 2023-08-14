@@ -23,6 +23,8 @@ stdenv.mkDerivation {
     sed -i 's|/bin/sh|sh|' \
       tools/build/src/engine/execunix.cpp \
       boost/process/detail/posix/shell_path.hpp
+    # https://github.com/boostorg/serialization/issues/221
+    rm 'boost/serialization/collection_size_type copy.hpp'
   '';
   configurePhase = "./bootstrap.sh";
   buildPhase = ''
