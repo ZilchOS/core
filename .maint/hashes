@@ -6,7 +6,7 @@ w5ni3cs1pv1i61vl2pvq7r6mp0p5k2hw stdenv.clang^toolchain
 qr53zyz1s7iqmqnvh35xfbj9rgbvx5x5 stdenv.clang^sysroot
 npzpalmc86a11y6v5nsk8jbzma93yc0x stdenv.busybox
 i0lhcympmgyz21sadpc131l2lqgklrwc stdenv.patchelf
-mb8ra7iwbizq20kj9b77h8r5g8hn2g51 gnumake
+md0z0qsmra1nz1pv76kj5hs8bj91a532 gnumake
 137kjpj986hs8p7z735xccqgldj3bga7 pkg-config
 x2m4lzk0q53y9z0vcbb5y5avys0gm73v zstd
 lf7vybrk2m1hq3mr5hs906x5dcj6k3nr nasm

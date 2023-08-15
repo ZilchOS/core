@@ -2,9 +2,9 @@
 
 let
   source-tarball-gnumake = fetchurl {
-    # local = /downloads/make-4.3.tar.gz;
-    url = "http://ftp.gnu.org/gnu/make/make-4.3.tar.gz";
-    sha256 = "e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19";
+    # local = /downloads/make-4.4.1.tar.gz;
+    url = "http://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz";
+    sha256 = "dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3";
   };
 in
   mkDerivation {
@@ -20,6 +20,13 @@ in
         rm src/getopt.h
         for f in src/getopt.c src/getopt1.c lib/fnmatch.c; do :> $f; done
         for f in lib/glob.c lib/xmalloc.c lib/error.c; do :> $f; done
+      # embrace chaos:
+        shuffle_comment='\/\* Handle shuffle mode argument.  \*\/'
+        shuffle_default='if (!shuffle_mode) shuffle_mode = xstrdup(\"random\");'
+        sed -i "s|$shuffle_comment|$shuffle_comment\n$shuffle_default|" \
+               src/main.c
+        grep -F 'if (!shuffle_mode) shuffle_mode = xstrdup("random");' \
+                src/main.c
       # configure:
         ash ./configure \
                 --build x86_64-linux \
