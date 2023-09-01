@@ -2,9 +2,9 @@
 
 let
   source-tarball-python = fetchurl {
-    # local = /downloads/Python-3.10.0.tar.xz;
-    url = "https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tar.xz";
-    sha256 = "5a99f8e7a6a11a7b98b4e75e0d1303d3832cada5534068f69c7b6222a7b1b002";
+    # local = /downloads/Python-3.11.5.tar.xz;
+    url = "https://www.python.org/ftp/python/3.11.5/Python-3.11.5.tar.xz";
+    sha256 = "85cd12e9cf1d6d5a45f17f7afe1cebe7ee628d3282281c492e86adf636defa3f";
   };
 in
   mkDerivation {
@@ -37,6 +37,6 @@ in
       # install:
         make SHELL=$SHELL -j $NPROC install
         # restore compileall just in case
-        cat Lib/compileall.py.bak > $out/lib/python3.10/compileall.py
+        cat Lib/compileall.py.bak > $out/lib/python3.11/compileall.py
     '';
   }
