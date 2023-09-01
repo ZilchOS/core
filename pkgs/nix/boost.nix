@@ -1,16 +1,16 @@
 { name ? "boost", stdenv, fetchurl, gnumake, linux-headers }:
 
-#> FETCH fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854
-#>  FROM https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2
+#> FETCH 6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e
+#>  FROM https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
 
 stdenv.mkDerivation {
   pname = name;
-  version = "1.77.0";
+  version = "1.83.0";
 
   src = fetchurl {
-    # local = /downloads/boost_1_77_0.tar.bz2;
-    url = "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2";
-    sha256 = "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854";
+    # local = /downloads/boost_1_83_0.tar.bz2;
+    url = "https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2";
+    sha256 = "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e";
   };
 
   buildInputs = [ gnumake ];
@@ -19,7 +19,9 @@ stdenv.mkDerivation {
 
   postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
-      bootstrap.sh tools/build/src/engine/build.sh
+      bootstrap.sh
+    sed -i 's|/usr/bin/env sh|${stdenv.busybox}/bin/ash|' \
+      tools/build/src/engine/build.sh
     sed -i 's|/bin/sh|sh|' \
       tools/build/src/engine/execunix.cpp \
       boost/process/detail/posix/shell_path.hpp
@@ -29,12 +31,13 @@ stdenv.mkDerivation {
   configurePhase = "./bootstrap.sh";
   buildPhase = ''
     mkdir -p extra-includes
-    cp ${stdenv.clang.sysroot}/include/clang/*mmintrin.h extra-includes/
-    cp ${stdenv.clang.sysroot}/include/clang/mm_malloc.h extra-includes/
-    cp ${stdenv.clang.sysroot}/include/clang/unwind.h extra-includes/
+    cp ${stdenv.clang.sysroot}/lib/clang/17/include/*intrin*.h extra-includes/
+    cp ${stdenv.clang.sysroot}/lib/clang/17/include/mm_malloc.h extra-includes/
+    cp ${stdenv.clang.sysroot}/lib/clang/17/include/unwind.h extra-includes/
     export LD_LIBRARY_PATH="${stdenv.clang.sysroot}/lib"
     ./b2 --without-python -j $NPROC \
       include=${linux-headers}/include \
+      include=${stdenv.clang.sysroot}/include/x86_64-unknown-linux-musl/c++/v1 \
       include=extra-includes
   '';
   installPhase = ''

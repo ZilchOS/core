@@ -21,6 +21,8 @@ stdenv.mkDerivation {
       Makefile.in src/Makefile.in doc/Makefile.in
   '';
 
+  extraConfigureFlags = [ "CXXFLAGS=-Wno-register" ];
+
   allowedRequisites = [ "out" stdenv.musl ];
   allowedReferences = [ "out" stdenv.musl ];
 }

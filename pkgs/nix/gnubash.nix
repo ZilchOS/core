@@ -16,7 +16,10 @@ stdenv.mkDerivation {
   buildInputs = [ gnumake ];
 
   postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
-  extraConfigureFlags = [ "--without-bash-malloc" ];
+  extraConfigureFlags = [
+    "--without-bash-malloc"
+    "CFLAGS=-Wno-implicit-function-declaration"
+  ];
 
   # TODO: why so many
   allowedRequisites = [ "out" stdenv.clang.sysroot stdenv.musl stdenv.busybox];

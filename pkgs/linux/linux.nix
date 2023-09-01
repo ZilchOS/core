@@ -22,7 +22,7 @@ stdenv.mkDerivation {
       scripts/*.sh scripts/*/*.sh
   '';
 
-  patches = [ ./linux-no-objtool.patch ];
+  patches = [ ./linux-no-objtool.patch ./vdso_sgx.patch ];
 
   configurePhase = ''
     ./scripts/kconfig/merge_config.sh -n -m \
@@ -46,7 +46,8 @@ stdenv.mkDerivation {
     make -j $NPROC "HOSTCC=$HOSTCC" LLVM=1 \
       KBUILD_BUILD_USER=zilch \
       KBUILD_BUILD_HOST=zilchos.org \
-      KBUILD_BUILD_TIMESTAMP=@0
+      KBUILD_BUILD_TIMESTAMP=@0 \
+      LDFLAGS=--undefined-version
   '';
 
   installPhase = ''

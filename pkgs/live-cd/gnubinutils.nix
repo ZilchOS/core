@@ -20,6 +20,8 @@ stdenv.mkDerivation {
             configure missing install-sh mkinstalldirs
     # see libtool's 74c8993c178a1386ea5e2363a01d919738402f30
     sed -i 's/| \$NL2SP/| sort | $NL2SP/' ltmain.sh
+    # prefix gets into sources, source file MD5 gets into linker
+    # sed -i 's|"\$prefix"|""|' ld/emultempl/elf.em
   '';
 
   extraConfigureFlags = [
@@ -27,6 +29,8 @@ stdenv.mkDerivation {
     "--enable-targets=x86_64-elf,x86_64-pe"
     "--enable-deterministic-archives"
   ];
+
+  installPhase = "make install-strip";  # sidesteps the MD5 -> binaries problem
 
   allowedRequisites = [ "out" stdenv.musl stdenv.clang.sysroot ];
   allowedReferences = [ "out" stdenv.musl stdenv.clang.sysroot ];

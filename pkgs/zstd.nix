@@ -18,7 +18,7 @@ stdenv.mkDerivation {
   configurePhase = "";
 
   extraBuildFlags = [
-    "CFLAGS='-O3 -I${stdenv.clang.sysroot}/include/clang'"
+    "CFLAGS='-O3 -isystem ${stdenv.clang.sysroot}/lib/clang/17/include'"
   ];
   installPhase = "make install PREFIX=$out";
   postInstall = ''

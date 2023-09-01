@@ -17,7 +17,10 @@ stdenv.mkDerivation {
             configure glib/configure install-sh glib/install-sh
   '';
 
-  extraConfigureFlags = [ "--with-internal-glib" ];
+  extraConfigureFlags = [
+    "--with-internal-glib"
+    "CFLAGS=-Wno-int-conversion"
+  ];
 
   allowedRequisites = [ "out" stdenv.clang.sysroot stdenv.musl ];
   allowedReferences = [ "out" stdenv.clang.sysroot stdenv.musl ];
