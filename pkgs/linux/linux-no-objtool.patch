@@ -1,18 +1,38 @@
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -237,7 +237,6 @@
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_SOFTIRQ_ON_OWN_STACK
- 	select HAVE_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
--	select HAVE_STACK_VALIDATION		if X86_64
- 	select HAVE_STATIC_CALL
- 	select HAVE_STATIC_CALL_INLINE		if HAVE_STACK_VALIDATION
- 	select HAVE_PREEMPT_DYNAMIC
-@@ -256,7 +255,6 @@
- 	select RTC_MC146818_LIB
- 	select SPARSE_IRQ
- 	select SRCU
--	select STACK_VALIDATION			if HAVE_STACK_VALIDATION && (HAVE_STATIC_CALL_INLINE || RETPOLINE)
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
- 	select TRACE_IRQFLAGS_SUPPORT
+@@ -245,7 +245,6 @@ config X86
+ 	select HAVE_NOINSTR_HACK		if HAVE_OBJTOOL
+ 	select HAVE_NMI
+ 	select HAVE_NOINSTR_VALIDATION		if HAVE_OBJTOOL
+-	select HAVE_OBJTOOL			if X86_64
+ 	select HAVE_OPTPROBES
+ 	select HAVE_PCSPKR_PLATFORM
+ 	select HAVE_PERF_EVENTS
+--- a/arch/x86/include/asm/unwind_hints.h
++++ b/arch/x86/include/asm/unwind_hints.h
+@@ -16,7 +16,6 @@
+ .endm
+ 
+ .macro UNWIND_HINT_ENTRY
+-	VALIDATE_UNRET_BEGIN
+ 	UNWIND_HINT_END_OF_STACK
+ .endm
+ 
+@@ -58,7 +57,6 @@
+ .endm
+ 
+ .macro UNWIND_HINT_IRET_ENTRY base=%rsp offset=0 signal=1
+-	VALIDATE_UNRET_BEGIN
+ 	UNWIND_HINT_IRET_REGS base=\base offset=\offset signal=\signal
+ .endm
+
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1107,7 +1107,6 @@ SYM_CODE_START(error_entry)
+ 	FENCE_SWAPGS_KERNEL_ENTRY
+ 	CALL_DEPTH_ACCOUNT
+ 	leaq	8(%rsp), %rax			/* return pt_regs pointer */
+-	VALIDATE_UNRET_END
+ 	RET
+ 
+ .Lbstep_iret:

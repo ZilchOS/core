@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation {
   pname = name;
-  version = "5.15";
+  version = "6.4.12";
 
   src = fetchurl {
-    # local = /downloads/linux-5.15.tar.xz;
-    url = "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz";
-    sha256 = "57b2cf6991910e3b67a1b3490022e8a0674b6965c74c12da1e99d138d1991ee8";
+    # local = /downloads/linux-6.4.12.tar.xz;
+    url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.12.tar.xz";
+    sha256 = "cca91be956fe081f8f6da72034cded96fe35a50be4bfb7e103e354aa2159a674";
   };
 
   outputs = [ "kernel" "config" "gen_init_cpio" ];
@@ -18,11 +18,12 @@ stdenv.mkDerivation {
     sed -i 's|#!/usr/bin/awk|#!${stdenv.busybox}/bin/awk|' \
       scripts/*.sh scripts/*/*.sh
     sed -i 's|#!/bin/sh|#!${stdenv.busybox}/bin/ash|' \
-      scripts/remove-stale-files \
+      scripts/check-local-export scripts/misc-check scripts/mkcompile_h \
+      scripts/remove-stale-files scripts/setlocalversion \
       scripts/*.sh scripts/*/*.sh
   '';
 
-  patches = [ ./linux-no-objtool.patch ./vdso_sgx.patch ];
+  patches = [ ./linux-no-objtool.patch ];
 
   configurePhase = ''
     ./scripts/kconfig/merge_config.sh -n -m \
@@ -31,6 +32,7 @@ stdenv.mkDerivation {
       ${./config}
     make LLVM=1 KCONFIG_ALLCONFIG=.config allnoconfig
     cat .config
+    ! grep OBJTOOL=y .config
   '';
 
   buildPhase = ''
@@ -47,7 +49,7 @@ stdenv.mkDerivation {
       KBUILD_BUILD_USER=zilch \
       KBUILD_BUILD_HOST=zilchos.org \
       KBUILD_BUILD_TIMESTAMP=@0 \
-      LDFLAGS=--undefined-version
+      KBUILD_BUILD_VERSION=1
   '';
 
   installPhase = ''

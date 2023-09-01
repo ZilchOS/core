@@ -2,9 +2,9 @@
 
 let
   source-tarball-linux = fetchurl {
-    # local = /downloads/linux-5.15.tar.xz;
-    url = "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz";
-    sha256 = "57b2cf6991910e3b67a1b3490022e8a0674b6965c74c12da1e99d138d1991ee8";
+    # local = /downloads/linux-6.4.12.tar.xz;
+    url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.12.tar.xz";
+    sha256 = "cca91be956fe081f8f6da72034cded96fe35a50be4bfb7e103e354aa2159a674";
   };
 in
   mkDerivation {
@@ -13,11 +13,11 @@ in
     script = ''
       # unpack:
         unpack ${source-tarball-linux} \
-          linux-5.15/Makefile \
-          linux-5.15/arch/x86 \
-          linux-5.15/include \
-          linux-5.15/scripts \
-          linux-5.15/tools
+          linux-6.4.12/Makefile \
+          linux-6.4.12/arch/x86 \
+          linux-6.4.12/include \
+          linux-6.4.12/scripts \
+          linux-6.4.12/tools
       # build:
         make -j $NPROC \
           CONFIG_SHELL=${busybox}/bin/ash \
