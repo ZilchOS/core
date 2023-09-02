@@ -1,6 +1,6 @@
-i3wlhb23nhn8wgiys232cs9wp770df4l bootstrap-musl
-0zkbia4ld9wnyrca8qkm5b1krj7h2h59 bootstrap-toolchain
-xawwj0y9n5wwibf9732125bqx70rhrnh bootstrap-busybox
+1hwwkv8jdvzz7da1wjbhsg5zmydcxsw9 bootstrap-musl
+xpsr4hb7lbym9r591jc7rpwpdjy3l7yf bootstrap-toolchain
+nrvlhhmn1mdlvc46ysqiinx49mw3cd6b bootstrap-busybox
 c6sp7a9ynx6r56i3lgi6v1dbhdgi3lzp stdenv.musl
 141ma03sl60rzh25qj2q2xh6f4lhzw55 stdenv.clang^toolchain
 znl8g2g989w8jbd65nkg5lmi09zfrdf1 stdenv.clang^sysroot
