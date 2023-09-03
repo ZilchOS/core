@@ -1,10 +1,10 @@
 { fetchurl }:
 
-#> FETCH ae31ecb3c6e9ff3154cb7a55f017090448f88482f0e94ac927c0c67a1f33b9cf
-#>  FROM https://curl.se/download/cacert-2021-10-26.pem
+#> FETCH 23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9
+#>  FROM https://curl.se/ca/cacert-2023-08-22.pem
 
 fetchurl {
-  # local = /downloads/cacert-2021-10-26.pem";
-  url = "https://curl.se/ca/cacert-2021-10-26.pem";
-  sha256 = "ae31ecb3c6e9ff3154cb7a55f017090448f88482f0e94ac927c0c67a1f33b9cf";
+  # local = /downloads/cacert-2023-08-22.pem";
+  url = "https://curl.se/ca/cacert-2023-08-22.pem";
+  sha256 = "23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9";
 }
