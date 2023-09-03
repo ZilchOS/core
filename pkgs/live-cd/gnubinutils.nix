@@ -1,16 +1,16 @@
 { name ? "gnubinutils", stdenv, fetchurl, gnumake }:
 
-#> FETCH 820d9724f020a3e69cb337893a0b63c2db161dadcb0e06fc11dc29eb1e84a32c
-#>  FROM https://ftp.gnu.org/gnu/binutils/binutils-2.37.tar.xz
+#> FETCH 645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00
+#>  FROM https://ftp.gnu.org/gnu/binutils/binutils-2.39.tar.xz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "2.37";
+  version = "2.39";
 
   src = fetchurl {
-    # local = /downloads/binutils-2.37.tar.xz;
-    url = "https://ftp.gnu.org/gnu/binutils/binutils-2.37.tar.xz";
-    sha256 = "820d9724f020a3e69cb337893a0b63c2db161dadcb0e06fc11dc29eb1e84a32c";
+    # local = /downloads/binutils-2.39.tar.xz;
+    url = "https://ftp.gnu.org/gnu/binutils/binutils-2.39.tar.xz";
+    sha256 = "645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00";
   };
 
   buildInputs = [ gnumake ];
@@ -24,13 +24,29 @@ stdenv.mkDerivation {
     # sed -i 's|"\$prefix"|""|' ld/emultempl/elf.em
   '';
 
-  extraConfigureFlags = [
-    "--disable-nls"
-    "--enable-targets=x86_64-elf,x86_64-pe"
-    "--enable-deterministic-archives"
-  ];
+  configurePhase = ''
+    mkdir aliases
+    echo -e "#!${stdenv.busybox}/bin/ash\nexec ${stdenv.busybox}/bin/true" \
+      > aliases/makeinfo
+    chmod +x aliases/makeinfo
+    export PATH=$(pwd)/aliases:$PATH
+    ./configure \
+      --prefix=$out \
+      --disable-nls \
+      --disable-gprofng \
+      --enable-targets=x86_64-elf,x86_64-pe \
+      --enable-deterministic-archives
+  '';
 
-  installPhase = "make install-strip";  # sidesteps the MD5 -> binaries problem
+  buildPhase = ''
+    export PATH=$(pwd)/aliases:$PATH
+    make -j $NPROC all
+  '';
+
+  installPhase = ''
+    export PATH=$(pwd)/aliases:$PATH
+    make install-strip
+  '';  # sidesteps the MD5 -> binaries problem
 
   allowedRequisites = [ "out" stdenv.musl stdenv.clang.sysroot ];
   allowedReferences = [ "out" stdenv.musl stdenv.clang.sysroot ];
