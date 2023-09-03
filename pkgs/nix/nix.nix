@@ -1,6 +1,12 @@
 { name ? "nix", stdenv, fetchurl, pkg-config, gnumake, gnubash, editline, boost
-, curl, libarchive, sqlite, libsodium, brotli, seccomp, lowdown
+, curl, libarchive, sqlite, libsodium, brotli, seccomp, lowdown, nlohmann_json
 , linux-headers }:
+
+#> FETCH f3f8016621cf3971e0768404f05b89d4a7fc1911dddae5a9a7ed4bf62519302c
+#>  FROM https://github.com/ZilchOS/nix/releases/download/nix-2.17.0-zilched/nix-2.17.0-zilched.tar.xz
+
+#> FETCH 3659cd137c320991a78413dd370a92fd18e0a8bc36d017d554f08677a37d7d5a
+#>  FROM https://raw.githubusercontent.com/somasis/musl-compat/c12ea3af4e6ee53158a175d992049c2148db5ff6/include/sys/queue.h
 
 let
   queue-h = fetchurl {
@@ -11,17 +17,17 @@ let
 in
   stdenv.mkDerivation {
     pname = name;
-    version = "2.5.1-zilched";
+    version = "2.17.0-zilched";
 
     src = fetchurl {
-      # local = /downloads/nix-2.5.1-zilched.tar.xz;
-      url = "https://github.com/ZilchOS/nix/releases/download/nix-2.5.1-zilched/nix-2.5.1-zilched.tar.xz";
-      sha256 = "bb2e48c487e736916583233ab63fde898117161c0107a2aa3008387a53b40101";
+      # local = /downloads/nix-2.17.0-zilched.tar.xz;
+      url = "https://github.com/ZilchOS/nix/releases/download/nix-2.17.0-zilched/nix-2.17.0-zilched.tar.xz";
+      sha256 = "f3f8016621cf3971e0768404f05b89d4a7fc1911dddae5a9a7ed4bf62519302c";
     };
 
     buildInputs = [
       pkg-config gnumake gnubash editline boost curl libarchive sqlite libsodium
-      brotli seccomp lowdown
+      brotli seccomp lowdown nlohmann_json
     ];
 
     postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
@@ -31,11 +37,13 @@ in
       mkdir -p extra-includes/sys; cp ${queue-h} extra-includes/sys/queue.h
       ln -s ${stdenv.busybox}/bin/true stubs/jq
       BROTLI_CFLAGS="$(pkg-config --cflags libbrotlidec)"
+      NLOHMANN_CFLAGS="$(pkg-config --cflags nlohmann_json)"
       LINUX_CFLAGS="-I${linux-headers}/include"
-      EXTRA_CFLAGS="$BROTLI_CFLAGS $LINUX_CFLAGS -Iextra-includes"
-      sed -i "s|^CFLAGS=$|CFLAGS='$EXTRA_CFLAGS'|" configure
-      sed -i "s|^CXXFLAGS=$|CXXFLAGS='$EXTRA_CFLAGS'|" configure
+      EXTRA_CFLAGS="$BROTLI_CFLAGS $NLOHMANN_CFLAGS $LINUX_CFLAGS"
+      EXTRA_CFLAGS="$EXTRA_CFLAGS -Iextra-includes"
       ${gnubash}/bin/bash ./configure \
+        CFLAGS="$EXTRA_CFLAGS" \
+        CXXFLAGS="$EXTRA_CFLAGS" \
         LDFLAGS="-L${boost.nixRuntimeMini}/lib -L${lowdown}/lib" \
         --prefix=$out \
         --with-boost=${boost.headers} \
@@ -67,5 +75,6 @@ in
       "out" stdenv.clang.sysroot stdenv.musl
       stdenv.busybox brotli lowdown editline libsodium libarchive sqlite
       boost.nixRuntimeMini curl curl.mbedtls curl.ca-bundle seccomp
+      nlohmann_json
     ];
   }
