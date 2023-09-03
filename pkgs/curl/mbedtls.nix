@@ -1,17 +1,17 @@
 { name ? "mbedtls", stdenv, fetchurl, gnumake }:
 
-#> FETCH 6519579b836ed78cc549375c7c18b111df5717e86ca0eeff4cb64b2674f424cc
-#>  FROM https://github.com/ARMmbed/mbedtls/archive/refs/tags/v2.28.0.tar.gz
-#>    AS mbedtls-2.28.0.tar.gz
+#> FETCH a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5
+#>  FROM https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz
+#>    AS mbedtls-3.4.1.tar.gz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "2.28.0";  # curl doesn't seem to be ready for 3.0/3.1 as of 7.81
+  version = "3.4.1";
 
   src = fetchurl {
-    # local = /downloads/mbedtls-2.28.0.tar.gz;
-    url = "https://github.com/ARMmbed/mbedtls/archive/refs/tags/v2.28.0.tar.gz";
-    sha256 = "6519579b836ed78cc549375c7c18b111df5717e86ca0eeff4cb64b2674f424cc";
+    # local = /downloads/mbedtls-3.4.1.tar.gz;
+    url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.4.1.tar.gz";
+    sha256 = "a420fcf7103e54e775c383e3751729b8fb2dcd087f6165befd13f28315f754f5";
   };
 
   buildInputs = [ gnumake ];
@@ -24,6 +24,7 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/include $out/lib
     cp -rv include/mbedtls $out/include/
+    cp -rv include/psa $out/include/
     cp -dv library/*.so* $out/lib/
   '';
 

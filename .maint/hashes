@@ -20,8 +20,8 @@ vgprxdpjkmrvim5hzbvn5v5kn8d52rpr gnubison
 afsbk8cahn6zsjx57sgwb6mvdqlk0v3v linux^kernel
 8l6m6rg4ql5k8f9rr9kn9z64csqrw7sc linux^config
 rv9kh7x0j4hdw7hxjpxhm8c42yfy83y6 linux^gen_init_cpio
-r62s6nid7cpbknwncbh7yb20lqkyh5v8 curl
-nbp8hh6fffy5sz7kifmsdx15zazmjw18 mbedtls
+wq5xbjd4250xrbsanlq1i79vvnxk8555 curl
+3zxk757v5h1mj4rp8bhldk6wdbvbqwxn mbedtls
 r5b55rgjbjbrb0ksy5mx6yibw7a3pas3 ca-bundle
 6qyaglzjmvm45dlwbzfb1rdc4g6kzahx boost^all
 7ag1rfv8bynavngi7k6bgfgbxrbav98x boost^headers
@@ -35,7 +35,7 @@ mj58nb679y2qnk2haajh0x58qh3ly46w gnugperf
 ybxc8hcw1jlik2gikfy75jdr235irb74 editline
 qjrsnlvmgx0wiv74s3l2swhkr7lzfr7h libsodium
 jzr4jcl0l8ki87allabxi7ljh6bi68k2 libarchive
-5winlhh6cjxb97jgba5ciy3xvxa3jl04 nix
+sdr9zip7dmzfn288m4ga35m7542fd9a0 nix
 bsp7wll6rixavcacwnycgkwh2xlbi73n live-cd^initscript
 xdzl43dj76lffq93d82hsrb8fkairwdc live-cd^initrd
 4dkkd8ciasx2lkpghmasxix48l1illp6 live-cd^limine_config
