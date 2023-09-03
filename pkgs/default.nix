@@ -92,6 +92,7 @@ let
       linux-headers = _bootstrap.early-linux-headers;
     };
     lowdown = callPackage ./nix/lowdown.nix {};
+    nlohmann_json = callPackage ./nix/nlohmann_json.nix {};
     gnubash = callPackage ./nix/gnubash.nix {};
     gnugperf = callPackage ./nix/gnugperf.nix {};
     editline = callPackage ./nix/editline.nix {};
