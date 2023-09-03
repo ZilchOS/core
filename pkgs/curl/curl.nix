@@ -1,16 +1,16 @@
 { name ? "curl", stdenv, fetchurl, gnumake, mbedtls, ca-bundle }:
 
-#> FETCH a067b688d1645183febc31309ec1f3cdce9213d02136b6a6de3d50f69c95a7d3
-#>  FROM https://curl.se/download/curl-7.81.0.tar.xz
+#> FETCH dd322f6bd0a20e6cebdfd388f69e98c3d183bed792cf4713c8a7ef498cba4894
+#>  FROM https://curl.se/download/curl-8.2.1.tar.xz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "7.81.0";
+  version = "8.2.1";
 
   src = fetchurl {
-    # local = /downloads/curl-7.81.0.tar.xz;
-    url = "https://curl.se/download/curl-7.81.0.tar.xz";
-    sha256 = "a067b688d1645183febc31309ec1f3cdce9213d02136b6a6de3d50f69c95a7d3";
+    # local = /downloads/curl-8.2.1.tar.xz;
+    url = "https://curl.se/download/curl-8.2.1.tar.xz";
+    sha256 = "dd322f6bd0a20e6cebdfd388f69e98c3d183bed792cf4713c8a7ef498cba4894";
   };
 
   buildInputs = [ gnumake mbedtls ca-bundle ];
