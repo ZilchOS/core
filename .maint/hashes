@@ -5,7 +5,7 @@ c6sp7a9ynx6r56i3lgi6v1dbhdgi3lzp stdenv.musl
 141ma03sl60rzh25qj2q2xh6f4lhzw55 stdenv.clang^toolchain
 znl8g2g989w8jbd65nkg5lmi09zfrdf1 stdenv.clang^sysroot
 6a7j40rlra2hn7cc19crbqr3dx52wrmn stdenv.busybox
-m4qj1ph0m3df6lklv5fr1ni64n2lfinw stdenv.patchelf
+b5jj7pi9kgdq1vs8qj91nwgk8dccpwi7 stdenv.patchelf
 ikvmck2c33inbqh21zwwb2xh7if46cy9 gnumake
 y595s71yy3frdc9c708jx2nrcbcxa69k pkg-config
 qc8b1qpkgrfw1ajflk8b8vxzj3hfcw2z zstd
@@ -35,7 +35,7 @@ mj58nb679y2qnk2haajh0x58qh3ly46w gnugperf
 ybxc8hcw1jlik2gikfy75jdr235irb74 editline
 qjrsnlvmgx0wiv74s3l2swhkr7lzfr7h libsodium
 jzr4jcl0l8ki87allabxi7ljh6bi68k2 libarchive
-jmhz99753yg0qwncps53l39lrkkjdxnf nix
+fdmhv92jk5jlln25db5k6cj5ck1vkkkn nix
 bsp7wll6rixavcacwnycgkwh2xlbi73n live-cd^initscript
 xdzl43dj76lffq93d82hsrb8fkairwdc live-cd^initrd
 4dkkd8ciasx2lkpghmasxix48l1illp6 live-cd^limine_config

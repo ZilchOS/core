@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation {
   pname = name;
-  version = "0.13";
+  version = "0.18.0";
 
   src = fetchurl {
-    # local = /downloads/patchelf-0.13.tar.bz2;
-    url = "https://github.com/NixOS/patchelf/releases/download/0.13/patchelf-0.13.tar.bz2";
-    sha256 = "4c7ed4bcfc1a114d6286e4a0d3c1a90db147a4c3adda1814ee0eee0f9ee917ed";
+    # local = /downloads/patchelf-0.18.0.tar.bz2;
+    url = "https://github.com/NixOS/patchelf/releases/download/0.18.0/patchelf-0.18.0.tar.bz2";
+    sha256 = "1952b2a782ba576279c211ee942e341748fdb44997f704dd53def46cd055470b";
   };
 
   buildInputs = [ gnumake ];
