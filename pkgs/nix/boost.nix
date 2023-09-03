@@ -35,14 +35,15 @@ stdenv.mkDerivation {
     cp ${stdenv.clang.sysroot}/lib/clang/17/include/mm_malloc.h extra-includes/
     cp ${stdenv.clang.sysroot}/lib/clang/17/include/unwind.h extra-includes/
     export LD_LIBRARY_PATH="${stdenv.clang.sysroot}/lib"
-    ./b2 --without-python -j $NPROC \
+    ./b2 -j $NPROC \
       include=${linux-headers}/include \
       include=${stdenv.clang.sysroot}/include/x86_64-unknown-linux-musl/c++/v1 \
-      include=extra-includes
+      include=extra-includes \
+      --with-context --with-thread --with-system
   '';
   installPhase = ''
     export LD_LIBRARY_PATH="${stdenv.clang.sysroot}/lib"
-    ./b2 install --prefix=$all
+    ./b2 install --prefix=$all --with-context --with-thread --with-system
     # Make boost header paths relative so that they are not runtime dependencies
     cd $all/include
     find . -type f -exec sh -c \
