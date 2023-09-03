@@ -1,17 +1,19 @@
 { name ? "libarchive", stdenv, fetchurl, gnumake }:
 
-#> FETCH f0b19ff39c3c9a5898a219497ababbadab99d8178acc980155c7e1271089b5a0
-#>  FROM https://libarchive.org/downloads/libarchive-3.5.2.tar.xz
+#> FETCH b17403ce670ff18d8e06fea05a9ea9accf70678c88f1b9392a2e29b51127895f
+#>  FROM http://libarchive.org/downloads/libarchive-3.7.1.tar.xz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "3.5.2";
+  version = "3.7.1";
 
   src = fetchurl {
-    # local = /downloads/libarchive-3.5.2.tar.xz;
-    url = "https://libarchive.org/downloads/libarchive-3.5.2.tar.xz";
-    sha256 = "f0b19ff39c3c9a5898a219497ababbadab99d8178acc980155c7e1271089b5a0";
+    # local = /downloads/libarchive-3.7.1.tar.xz;
+    url = "https://libarchive.org/downloads/libarchive-3.7.1.tar.xz";
+    sha256 = "b17403ce670ff18d8e06fea05a9ea9accf70678c88f1b9392a2e29b51127895f";
   };
+
+  extraConfigureFlags = [ "--without-openssl" ];
 
   buildInputs = [ gnumake ];
 
