@@ -1,16 +1,16 @@
 { name ? "seccomp", stdenv, fetchurl, gnumake, gnugperf, linux-headers }:
 
-#> FETCH 59065c8733364725e9721ba48c3a99bbc52af921daf48df4b1e012fbc7b10a76
-#>  FROM https://github.com/seccomp/libseccomp/releases/download/v2.5.3/libseccomp-2.5.3.tar.gz
+#> FETCH d82902400405cf0068574ef3dc1fe5f5926207543ba1ae6f8e7a1576351dcbdb
+#>  FROM https://github.com/seccomp/libseccomp/releases/download/v2.5.4/libseccomp-2.5.4.tar.gz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "2.5.3";
+  version = "2.5.4";
 
   src = fetchurl {
-    # local = /downloads/libseccomp-2.5.3.tar.gz;
-    url = "https://github.com/seccomp/libseccomp/releases/download/v2.5.3/libseccomp-2.5.3.tar.gz";
-    sha256 = "59065c8733364725e9721ba48c3a99bbc52af921daf48df4b1e012fbc7b10a76";
+    # local = /downloads/libseccomp-2.5.4.tar.gz;
+    url = "https://github.com/seccomp/libseccomp/releases/download/v2.5.4/libseccomp-2.5.4.tar.gz";
+    sha256 = "d82902400405cf0068574ef3dc1fe5f5926207543ba1ae6f8e7a1576351dcbdb";
   };
 
   buildInputs = [ gnumake gnugperf ];
