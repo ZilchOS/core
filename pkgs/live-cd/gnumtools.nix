@@ -1,16 +1,16 @@
 { name ? "gnumtools", stdenv, fetchurl, gnumake }:
 
-#> FETCH 0hl3zbj0lyx2m0fyydv0wcgpmyqfg4khp098jqjn2yz44dz1k6vr
-#>  FROM http://ftp.gnu.org/gnu/mtools/mtools-4.0.37.tar.bz2
+#> FETCH 541e179665dc4e272b9602f2074243591a157da89cc47064da8c5829dbd2b339
+#>  FROM http://ftp.gnu.org/gnu/mtools/mtools-4.0.47.tar.bz2
 
 stdenv.mkDerivation {
   pname = name;
-  version = "4.0.37";
+  version = "4.0.43";
 
   src = fetchurl {
-    # local = /downloads/mtools-4.0.37.tar.bz2;
-    url = "http://ftp.gnu.org/gnu/mtools/mtools-4.0.37.tar.bz2";
-    sha256 = "0hl3zbj0lyx2m0fyydv0wcgpmyqfg4khp098jqjn2yz44dz1k6vr";
+    # local = /downloads/mtools-4.0.43.tar.bz2;
+    url = "http://ftp.gnu.org/gnu/mtools/mtools-4.0.43.tar.bz2";
+    sha256 = "541e179665dc4e272b9602f2074243591a157da89cc47064da8c5829dbd2b339";
   };
 
   buildInputs = [ gnumake ];
