@@ -21,10 +21,10 @@ cp -r "$D1" ./.tmp/dehash_and_diff/1
 cp -r "$D2" ./.tmp/dehash_and_diff/2
 chmod -R +rw ./.tmp/dehash_and_diff
 
-find ./.tmp/dehash_and_diff/1 -type f | xargs sed -i "s|$D1|$ZEROED_1|g"
-find ./.tmp/dehash_and_diff/2 -type f | xargs sed -i "s|$D2|$ZEROED_1|g"
+find ./.tmp/dehash_and_diff/1 -type f -print0 | xargs -0 sed -i "s|$D1|$ZEROED_1|g"
+find ./.tmp/dehash_and_diff/2 -type f -print0 | xargs -0 sed -i "s|$D2|$ZEROED_1|g"
 
-find ./.tmp/dehash_and_diff/1 | xargs touch -h -t197001010000
-find ./.tmp/dehash_and_diff/2 | xargs touch -h -t197001010000
+find ./.tmp/dehash_and_diff/1 -print0 | xargs -0 touch -h -t197001010000
+find ./.tmp/dehash_and_diff/2 -print0 | xargs -0 touch -h -t197001010000
 
 diffoscope ./.tmp/dehash_and_diff/1 ./.tmp/dehash_and_diff/2 | less

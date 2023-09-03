@@ -8,7 +8,7 @@ set -uex
 mkdir -p .tmp
 
 if [[ "$USE_CCACHE" == 1 ]]; then
-  ./.maint/tools/build-using-ccache.sh -o.tmp/live-cd-$$ live-cd.iso
+  ./.maint/tools/build-using-ccache.sh -o.tmp/live-cd-$$ live-cd^iso
 else
   nix build --option warn-dirty false -o.tmp/live-cd-$$ '.#live-cd^iso'
 fi
