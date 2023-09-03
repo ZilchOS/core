@@ -1,27 +1,27 @@
 { name ? "lowdown", stdenv, fetchurl, gnumake }:
 
-#> FETCH 1b1896b334861db1c588adc6b72ecd88b9e143a397f04d96a6fdeb633f915208
-#>  FROM https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_0_10_0.tar.gz
-#>    AS lowdown-0.10.0.tar.gz
+#> FETCH 049b7883874f8a8e528dc7c4ed7b27cf7ceeb9ecf8fe71c3a8d51d574fddf84b
+#>  FROM https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_1_0_2.tar.gz
+#>    AS lowdown-1.0.2.tar.gz
 
 stdenv.mkDerivation {
   pname = name;
-  version = "1.10.0";
+  version = "1.0.2";
 
   src = fetchurl {
-    # local = /downloads/lowdown-0.10.0.tar.gz;
-    url = "https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_0_10_0.tar.gz";
-    sha256 = "1b1896b334861db1c588adc6b72ecd88b9e143a397f04d96a6fdeb633f915208";
+    # local = /downloads/lowdown-1.0.2.tar.gz;
+    url = "https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_1_0_2.tar.gz";
+    sha256 = "049b7883874f8a8e528dc7c4ed7b27cf7ceeb9ecf8fe71c3a8d51d574fddf84b";
   };
 
   buildInputs = [ gnumake ];
-
-  patches = [ ./lowdown-shared.patch ];
 
   postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
   configurePhase = "./configure PREFIX=$out";
 
   #fixupPhase = "";
+
+  installPhase = "make install_shared";
 
   allowedRequisites = [ "out" stdenv.musl ];
   allowedReferences = [ "out" stdenv.musl ];
