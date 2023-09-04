@@ -2,7 +2,7 @@
 afiwihmsrk09lwm470n19xzi0zq2cybd bootstrap-toolchain
 nrvlhhmn1mdlvc46ysqiinx49mw3cd6b bootstrap-busybox
 c6sp7a9ynx6r56i3lgi6v1dbhdgi3lzp stdenv.musl
-141ma03sl60rzh25qj2q2xh6f4lhzw55 stdenv.clang^toolchain
+33llw19zq9j88vw5grayr1g1w7kgmg84 stdenv.clang^toolchain
 znl8g2g989w8jbd65nkg5lmi09zfrdf1 stdenv.clang^sysroot
 6a7j40rlra2hn7cc19crbqr3dx52wrmn stdenv.busybox
 b5jj7pi9kgdq1vs8qj91nwgk8dccpwi7 stdenv.patchelf
