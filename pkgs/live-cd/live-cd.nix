@@ -90,20 +90,20 @@ in
       cp $initrd isoroot/initrd
       mkdir isoroot/boot
       cp $limine_config isoroot/boot/limine.cfg
-      cp ${limine}/share/limine/limine.sys isoroot/boot/
-      cp ${limine}/share/limine/limine-cd.bin isoroot/boot/
-      cp ${limine}/share/limine/limine-eltorito-efi.bin isoroot/boot/
+      cp ${limine}/share/limine/limine-bios.sys isoroot/boot/
+      cp ${limine}/share/limine/limine-bios-cd.bin isoroot/boot/
+      cp ${limine}/share/limine/limine-uefi-cd.bin isoroot/boot/
       find isoroot | xargs touch -d @0
 
       SOURCE_DATE_EPOCH=0 \
       ${gnuxorriso}/bin/xorriso \
         -as mkisofs \
-        -b boot/limine-cd.bin \
+        -b boot/limine-bios-cd.bin \
         -no-emul-boot -boot-load-size 4 -boot-info-table \
-        --efi-boot boot/limine-eltorito-efi.bin \
+        --efi-boot boot/limine-uefi-cd.bin \
         --efi-boot-part --efi-boot-image \
         --protective-msdos-label \
         isoroot -o $iso
-      ${limine}/bin/limine-install $iso
+      ${limine}/bin/limine bios-install $iso
     '' ];
   }
