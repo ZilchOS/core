@@ -13,13 +13,14 @@ stdenv.mkDerivation {
     sha256 = "ddd417f9caab3ef0f3031b938815a5c33367c3a50c09830138d208bd3126c98f";
   };
 
+  patches = [ ./limine.patch ];
+
   buildInputs = [ gnumake nasm gnubinutils gnumtools ];
 
   postPatch = ''
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure libgcc-binaries/make_toolchain.sh common/gensyms.sh \
       host/hgen.sh build-aux/install-sh freestanding-toolchain
-    sed -i 's|mformat -i|mformat -N 01c40200 -i|' GNUmakefile.in
   '';
 
   extraConfigureFlags = [

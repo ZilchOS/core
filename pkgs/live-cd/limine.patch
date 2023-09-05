@@ -1,0 +1,104 @@
+diff --git a/GNUmakefile.in b/GNUmakefile.in
+index 4809b33..1be9d6e 100644
+--- a/GNUmakefile.in
++++ b/GNUmakefile.in
+@@ -213,7 +213,7 @@ ifneq ($(BUILD_UEFI_CD),no)
+ 	$(MKDIR_P) '$(call SHESCAPE,$(BINDIR))'
+ 	rm -f '$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin'
+ 	dd if=/dev/zero of='$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin' bs=512 count=2880 2>/dev/null
+-	( mformat -i '$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin' -f 1440 :: && \
++	( mformat -N 01c40200 -i '$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin' -f 1440 :: && \
+ 	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin' ::/EFI && \
+ 	  mmd -D s -i '$(call SHESCAPE,$(BINDIR))/limine-uefi-cd.bin' ::/EFI/BOOT && \
+ 	  ( ( [ -f '$(call SHESCAPE,$(BUILDDIR))/common-uefi-aarch64/BOOTAA64.EFI' ] && \
+diff --git a/common/GNUmakefile b/common/GNUmakefile
+index 8699d40..b8cf6a7 100644
+--- a/common/GNUmakefile
++++ b/common/GNUmakefile
+@@ -194,7 +194,7 @@ ifeq ($(TARGET),bios)
+     override ASM32_FILES := $(shell find . -type f -name '*.asm_ia32')
+     override ASMB_FILES := $(shell find . -type f -name '*.asm_bios_ia32')
+ 
+-    override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM32_FILES:.asm_ia32=.o) $(ASMB_FILES:.asm_bios_ia32=.o) $(ASMX86_FILES:.asm_x86=.o))
++    override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM32_FILES:.asm_ia32=.o) $(ASMB_FILES:.asm_bios_ia32=.o) $(ASMX86_FILES:.asm_x86=.o)))
+     override OBJ_S2 := $(filter %.s2.o,$(OBJ))
+ endif
+ ifeq ($(TARGET),uefi-x86-64)
+@@ -202,29 +202,29 @@ ifeq ($(TARGET),uefi-x86-64)
+     override ASM64_FILES := $(shell find . -type f -name '*.asm_x86_64')
+     override ASM64U_FILES := $(shell find . -type f -name '*.asm_uefi_x86_64')
+ 
+-    override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_x86_64=.o) $(ASM64U_FILES:.asm_uefi_x86_64=.o) $(ASMX86_FILES:.asm_x86=.o))
++    override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_x86_64=.o) $(ASM64U_FILES:.asm_uefi_x86_64=.o) $(ASMX86_FILES:.asm_x86=.o)))
+ endif
+ ifeq ($(TARGET),uefi-ia32)
+     override ASMX86_FILES := $(shell find . -type f -name '*.asm_x86')
+     override ASM32_FILES := $(shell find . -type f -name '*.asm_ia32')
+     override ASM32U_FILES := $(shell find . -type f -name '*.asm_uefi_ia32')
+ 
+-    override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM32_FILES:.asm_ia32=.o) $(ASM32U_FILES:.asm_uefi_ia32=.o) $(ASMX86_FILES:.asm_x86=.o))
++    override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM32_FILES:.asm_ia32=.o) $(ASM32U_FILES:.asm_uefi_ia32=.o) $(ASMX86_FILES:.asm_x86=.o)))
+ endif
+ ifeq ($(TARGET),uefi-aarch64)
+     override ASM64_FILES := $(shell find . -type f -name '*.asm_aarch64')
+     override ASM64U_FILES := $(shell find . -type f -name '*.asm_uefi_aarch64')
+ 
+-    override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_aarch64=.o) $(ASM64U_FILES:.asm_uefi_aarch64=.o))
++    override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_aarch64=.o) $(ASM64U_FILES:.asm_uefi_aarch64=.o)))
+ endif
+ ifeq ($(TARGET),uefi-riscv64)
+     override ASM64_FILES := $(shell find . -type f -name '*.asm_riscv64')
+     override ASM64U_FILES := $(shell find . -type f -name '*.asm_uefi_riscv64')
+ 
+-    override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_riscv64=.o) $(ASM64U_FILES:.asm_uefi_riscv64=.o))
++    override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.o) $(ASM64_FILES:.asm_riscv64=.o) $(ASM64U_FILES:.asm_uefi_riscv64=.o)))
+ endif
+ 
+-override HEADER_DEPS := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.d))
++override HEADER_DEPS := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.d)))
+ 
+ .PHONY: all
+ 
+diff --git a/common/gensyms.sh b/common/gensyms.sh
+index 8e6aa8d..e63316c 100755
+--- a/common/gensyms.sh
++++ b/common/gensyms.sh
+@@ -5,7 +5,7 @@ set -e
+ LC_ALL=C
+ export LC_ALL
+ 
+-TMP0="$(mktemp)"
++TMP0=.tmp0
+ 
+ cat >"$TMP0" <<EOF
+ #! /bin/sh
+@@ -21,10 +21,10 @@ chmod +x "$TMP0"
+ 
+ rm "$TMP0"
+ 
+-TMP1="$(mktemp)"
+-TMP2="$(mktemp)"
+-TMP3="$(mktemp)"
+-TMP4="$(mktemp)"
++TMP1=.tmp1
++TMP2=.tmp2
++TMP3=.tmp3
++TMP4=.tmp4
+ 
+ trap "rm -f '$TMP1' '$TMP2' '$TMP3' '$TMP4'; trap - EXIT; exit" EXIT INT TERM QUIT HUP
+ 
+diff --git a/decompressor/GNUmakefile b/decompressor/GNUmakefile
+index 953c4c0..213642d 100644
+--- a/decompressor/GNUmakefile
++++ b/decompressor/GNUmakefile
+@@ -61,8 +61,8 @@ endif
+ 
+ override C_FILES := $(shell find . -type f -name '*.c')
+ override ASM_FILES := $(shell find . -type f -name '*.asm')
+-override OBJ := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(ASM_FILES:.asm=.o) $(C_FILES:.c=.o))
+-override HEADER_DEPS := $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.d))
++override OBJ := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(ASM_FILES:.asm=.o) $(C_FILES:.c=.o)))
++override HEADER_DEPS := $(sort $(addprefix $(call MKESCAPE,$(BUILDDIR))/, $(C_FILES:.c=.d)))
+ 
+ .PHONY: all
+ all: $(call MKESCAPE,$(BUILDDIR))/decompressor.bin
