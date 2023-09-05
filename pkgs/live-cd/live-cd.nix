@@ -97,6 +97,7 @@ in
 
       SOURCE_DATE_EPOCH=0 \
       ${gnuxorriso}/bin/xorriso \
+        -gid 0 -uid 0 \
         -as mkisofs \
         -b boot/limine-bios-cd.bin \
         -no-emul-boot -boot-load-size 4 -boot-info-table \
