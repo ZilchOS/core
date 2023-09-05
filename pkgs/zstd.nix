@@ -1,7 +1,7 @@
 { name ? "zstd", stdenv, fetchurl, gnumake }:
 
 #> FETCH 9c4396cc829cfae319a6e2615202e82aad41372073482fce286fac78646d3ee4
-#>  FROM https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz
+#>  FROM https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz
 
 stdenv.mkDerivation {
   pname = name;

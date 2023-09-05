@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   version = "1.4.19";
 
   src = fetchurl {
-    # local = /downloads/m4-1.14.19.tar.xz;
+    # local = /downloads/m4-1.4.19.tar.xz;
     url = "https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz";
     sha256 = "63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96";
   };
