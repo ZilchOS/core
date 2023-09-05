@@ -1,4 +1,4 @@
-{ name ? "nix", stdenv, fetchurl, pkg-config, gnumake, gnubash, editline, boost
+{ name ? "nix", stdenv, fetchurl, pkg-config, gnumake, editline, boost
 , curl, libarchive, sqlite, libsodium, brotli, seccomp, lowdown, nlohmann_json
 , linux-headers }:
 
@@ -26,22 +26,34 @@ in
     };
 
     buildInputs = [
-      pkg-config gnumake gnubash editline boost curl libarchive sqlite libsodium
+      pkg-config gnumake editline boost curl libarchive sqlite libsodium
       brotli seccomp lowdown nlohmann_json
     ];
 
-    postPatch = "sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure";
+    postPatch = ''
+      sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' configure
+      # avoid an expression confusing ash
+      nl configure | grep 7217 | tee configure-problematic-line
+      grep -F "'X\(//\)$'" configure-problematic-line
+      sed -i '7217d' configure
+      nl configure | grep 7217 | tee configure-problematic-line
+      ! grep -F "'X\(//\)$'" configure-problematic-line
+      # replace the declare confusing ash
+      sed -i 's|declare \$name=.*|:|' configure
+    '';
 
     configurePhase = ''
-      mkdir stubs; export PATH="$PATH:$(pwd)/stubs"
+      mkdir stubs; export PATH="$(pwd)/stubs:$PATH"
       mkdir -p extra-includes/sys; cp ${queue-h} extra-includes/sys/queue.h
       ln -s ${stdenv.busybox}/bin/true stubs/jq
+      ln -s ${stdenv.busybox}/bin/true stubs/expr
+      ln -s ${stdenv.busybox}/bin/ash stubs/bash
       BROTLI_CFLAGS="$(pkg-config --cflags libbrotlidec)"
       NLOHMANN_CFLAGS="$(pkg-config --cflags nlohmann_json)"
       LINUX_CFLAGS="-I${linux-headers}/include"
       EXTRA_CFLAGS="$BROTLI_CFLAGS $NLOHMANN_CFLAGS $LINUX_CFLAGS"
       EXTRA_CFLAGS="$EXTRA_CFLAGS -Iextra-includes"
-      ${gnubash}/bin/bash ./configure \
+      ash ./configure \
         CFLAGS="$EXTRA_CFLAGS" \
         CXXFLAGS="$EXTRA_CFLAGS" \
         LDFLAGS="-L${boost.nixRuntimeMini}/lib -L${lowdown}/lib" \
@@ -52,6 +64,8 @@ in
         --disable-cpuid \
         --disable-gtest \
         --with-sandbox-shell=${stdenv.busybox}/bin/busybox
+      sed -i "s|\''${prefix}|$out|g" config.status
+      sed -i "s|\''${exec_prefix}|$out|g" config.status
     '';
 
     postFixup = ''
