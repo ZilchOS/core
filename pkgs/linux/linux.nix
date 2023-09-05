@@ -21,6 +21,10 @@ stdenv.mkDerivation {
       scripts/check-local-export scripts/misc-check scripts/mkcompile_h \
       scripts/remove-stale-files scripts/setlocalversion \
       scripts/*.sh scripts/*/*.sh
+    # reproducible times
+    sed -i 's|(long) buf\.st_mtime,\s*/\* mtime \*/|(long) 0, /* mtime */|' \
+      usr/gen_init_cpio.c
+    grep -F '(long) 0, /* mtime */' usr/gen_init_cpio.c
   '';
 
   patches = [ ./linux-no-objtool.patch ];
