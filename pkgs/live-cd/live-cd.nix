@@ -1,6 +1,9 @@
 # TODO: get rid of initrd, boot to squashfs appended to iso?
 { name ? "ZilchOS-core-iso", mkCaDerivation
 , linux, musl, busybox, nix
+, ca-bundle, mbedtls, curl
+, libarchive, editline, brotli, sqlite, boost , lowdown, seccomp, libsodium
+, clang
 , zstd, limine, gnuxorriso }:
 
 let
@@ -23,7 +26,7 @@ in
       cat > $initscript <<EOF
       #!${busybox}/bin/ash
       set -uex
-      export PATH=${busybox}/bin
+      export PATH=${busybox}/bin:${nix}/bin
       echo 'Hello world!'
       mount -t devtmpfs devtmpfs /dev
       mount -t proc proc /proc
@@ -45,7 +48,12 @@ in
       dir  /nix                     0555 0 0
       dir  /nix/store               0555 0 0
       EOF
-      included='${musl} ${busybox}'
+      included='${musl} ${busybox} ${nix}'
+      included="$included ${ca-bundle} ${mbedtls} ${curl}"
+      included="$included ${libarchive} ${editline} ${brotli}"
+      included="$included ${sqlite} ${boost.nixRuntimeMini}"
+      included="$included ${lowdown} ${seccomp} ${libsodium}"
+      included="$included ${clang.sysroot}"
       for derivation in $included; do
         find $derivation -type d | sort > dirlist
         while IFS= read -r dir || [ -n "$dir" ]; do
