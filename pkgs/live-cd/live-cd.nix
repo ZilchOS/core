@@ -38,6 +38,7 @@ in
         echo '127.0.0.1' > /etc/hosts
         udhcpc
       fi
+      export NIX_FORCE_BUILD_PATH=/build
       setsid ash -c 'getty -n -l ${busybox}/bin/ash 0 /dev/tty0 &'
       exec setsid cttyhack ash
       EOF
