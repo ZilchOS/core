@@ -36,7 +36,7 @@ qjrsnlvmgx0wiv74s3l2swhkr7lzfr7h libsodium
 dasiy17cl0d0cc8x11r8br3fyyxyahhg libarchive
 kva7q87mxpnh51ms9nsn0q13yg3nx3cn nlohmann_json
 b91qc4g99r51fys5wladnv0r5c852xk5 nix
-qajv3rn13l5lapxigsl4dzyjl0fwbdam live-cd^initscript
-rfjfw31z0di4dgknk9gjn06p06ficgh6 live-cd^initrd
-sqy7phcf8qbzkr08v79ba5cm4c26q7js live-cd^limine_config
-b1byncflwdnip53ssf1dv4q82lq6d5na live-cd^iso
+dv30rmkq2xdsw8mn1srncscvd7l254xs live-cd^initscript
+mgfvqvfgkkflln7mqyjng5i3f0kix8gc live-cd^initrd
+00knav8mnf7nsq6p34xv5ax9rl68kxzz live-cd^limine_config
+hl7jhva7zcr35pky6cy74jfxbibc44jf live-cd^iso
