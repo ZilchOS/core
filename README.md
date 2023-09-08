@@ -9,6 +9,11 @@ Download an image from releases,
 to pop up no windows and use a serial port instead,
 press `Control-a` followed by an `x` to quit.
 
+The coolest thing to do from there is, probably,
+`nix build -j1 github:ZilchOS/core`. \
+That requires a ton of space and CPU though,
+`qemu-system-x86_64 -machine q35,accel=kvm -cpu host -smp 16 -m 16G -cdrom ZilchOS-core-*.iso`, maybe?
+
 ## What
 
 An minimal viable **Linux** distribution based on **Nix**,
