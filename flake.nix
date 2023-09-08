@@ -14,7 +14,9 @@
       corePkgs = (import ./pkgs) input;
     in
       {
-        packages.x86_64-linux = corePkgs;
+        packages.x86_64-linux = corePkgs // {
+          default = "${corePkgs.live-cd.iso}";
+        };
 
         ccachedPackages =
           (import ./pkgs) (input // { use-ccache = true; });
