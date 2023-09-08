@@ -35,7 +35,7 @@ in
       mkdir /tmp
       mkdir /bin; ln -s ${busybox}/bin/ash /bin/sh  # TODO: get rid of
       if ip a | grep -q eth0:; then
-        echo '127.0.0.1' > /etc/hosts
+        echo '127.0.0.1 localhost' > /etc/hosts
         udhcpc
       fi
       export NIX_FORCE_BUILD_PATH=/build
