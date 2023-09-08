@@ -7,6 +7,13 @@ CONFIG_64BIT=y
 CONFIG_BLK_DEV_INITRD=y
 CONFIG_RD_ZSTD=y
 
+# Processor type and features
+CONFIG_SMP=y
+
+# Power management and ACPI options
+CONFIG_ACPI=y
+CONFIG_ACPI_PROCESSOR=y
+
 # Executable file formats
 CONFIG_BINFMT_ELF=y
 CONFIG_BINFMT_SCRIPT=y
