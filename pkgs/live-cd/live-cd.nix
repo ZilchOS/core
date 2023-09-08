@@ -32,6 +32,11 @@ in
       mount -t proc proc /proc
       mount -t sysfs sysfs /sys
       mkdir /dev/pts; mount -t devpts none /dev/pts -o mode=620
+      if ip a | grep -q eth0:; then
+        mkdir /etc
+        echo '127.0.0.1' > /etc/hosts
+        udhcpc
+      fi
       setsid ash -c 'getty -n -l ${busybox}/bin/ash 0 /dev/tty0 &'
       exec setsid cttyhack ash
       EOF

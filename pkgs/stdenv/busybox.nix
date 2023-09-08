@@ -34,6 +34,11 @@ stdenv.mkDerivation rec {
     export PATH="$(pwd)/aliases:$PATH"
     make ${builtins.toString extraBuildFlags} defconfig
     sed -i 's|CONFIG_INSTALL_NO_USR=y|CONFIG_INSTALL_NO_USR=n|' .config
+    sed -i 's|FEATURE_COMPRESS_USAGE=y|FEATURE_COMPRESS_USAGE=n|' .config
+    DHCP_SCRIPT=CONFIG_UDHCPC_DEFAULT_SCRIPT
+    sed -i "s|#!/bin/sh|#!$out/bin/ash\nPATH=\"\$PATH:$out/bin\"|" \
+      examples/udhcp/simple.script
+    sed -i "s|$DHCP_SCRIPT=.*|$DHCP_SCRIPT=\"$out/udhcpc.script\"|" .config
   '';
 
   buildPhase = ''
@@ -43,6 +48,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     sed -i -e 's|^/usr/s\?bin/|/bin/|' -e 's|^/sbin/|/bin/|' busybox.links
     make ${builtins.toString extraBuildFlags} install CONFIG_PREFIX=$out
+    cp examples/udhcp/simple.script $out/udhcpc.script
   '';
 
   allowedRequisites = [ "out" stdenv.musl ];
