@@ -58,6 +58,7 @@ in
         CXXFLAGS="$EXTRA_CFLAGS" \
         LDFLAGS="-L${boost.nixRuntimeMini}/lib -L${lowdown}/lib" \
         --prefix=$out \
+        --sysconfdir=/etc \
         --with-boost=${boost.headers} \
         --disable-doc-gen \
         --disable-gc \
@@ -67,6 +68,8 @@ in
       sed -i "s|\''${prefix}|$out|g" config.status
       sed -i "s|\''${exec_prefix}|$out|g" config.status
     '';
+
+    installPhase = "make -j $NPROC install sysconfdir=$out/etc";
 
     postFixup = ''
       for p in \

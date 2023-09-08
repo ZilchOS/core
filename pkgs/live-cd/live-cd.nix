@@ -32,8 +32,9 @@ in
       mount -t proc proc /proc
       mount -t sysfs sysfs /sys
       mkdir /dev/pts; mount -t devpts none /dev/pts -o mode=620
+      mkdir /tmp
+      mkdir /bin; ln -s ${busybox}/bin/ash /bin/sh  # TODO: get rid of
       if ip a | grep -q eth0:; then
-        mkdir /etc
         echo '127.0.0.1' > /etc/hosts
         udhcpc
       fi
@@ -44,14 +45,17 @@ in
       touch -d @0 $initscript
 
       cat > packlist <<EOF
-      dir  /boot                    0550 0 0
-      file /boot/rdinit $initscript 0550 0 0
-      dir  /dev                     0555 0 0
-      dir  /proc                    0555 0 0
-      dir  /sys                     0555 0 0
-      dir  /root                    0550 0 0
-      dir  /nix                     0555 0 0
-      dir  /nix/store               0555 0 0
+      dir  /boot                           0550 0 0
+      file /boot/rdinit $initscript        0550 0 0
+      dir  /etc                            0555 0 0
+      dir  /etc/nix                        0555 0 0
+      file /etc/nix/nix.conf ${./nix.conf} 0550 0 0
+      dir  /dev                            0555 0 0
+      dir  /proc                           0555 0 0
+      dir  /sys                            0555 0 0
+      dir  /root                           0550 0 0
+      dir  /nix                            0555 0 0
+      dir  /nix/store                      0555 0 0
       EOF
       included='${musl} ${busybox} ${nix}'
       included="$included ${ca-bundle} ${mbedtls} ${curl}"
