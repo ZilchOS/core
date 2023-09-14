@@ -53,6 +53,10 @@ in
       LINUX_CFLAGS="-I${linux-headers}/include"
       EXTRA_CFLAGS="$BROTLI_CFLAGS $NLOHMANN_CFLAGS $LINUX_CFLAGS"
       EXTRA_CFLAGS="$EXTRA_CFLAGS -Iextra-includes"
+      # get rid of unneeded runtime dependency as described in [1]
+      invalid=$(echo "${nlohmann_json}" | \
+                sed -E "s|/[0-9a-z]{32}-|/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-|")
+      EXTRA_CFLAGS="$EXTRA_CFLAGS -fmacro-prefix-map=${nlohmann_json}=$invalid"
       ash ./configure \
         CFLAGS="$EXTRA_CFLAGS" \
         CXXFLAGS="$EXTRA_CFLAGS" \
@@ -92,6 +96,7 @@ in
       "out" stdenv.clang.sysroot stdenv.musl
       stdenv.busybox brotli lowdown editline libsodium libarchive sqlite
       boost.nixRuntimeMini curl curl.mbedtls curl.ca-bundle seccomp
-      nlohmann_json
     ];
   }
+
+# [1] https://trofi.github.io/posts/298-unexpected-runtime-dependencies-in-nixpkgs.html
