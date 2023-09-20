@@ -3,9 +3,9 @@
 
 let
   source-tarball-llvm = fetchurl {
-    # local = /downloads/llvm-project-17.0.0rc3.src.tar.xz;
-    url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.0-rc3/llvm-project-17.0.0rc3.src.tar.xz";
-    sha256 = "60493f4e974fcca7b739aea4901af2d957b0eaea34b42815359be59cf6c88fa2";
+    # local = /downloads/llvm-project-17.0.1.src.tar.xz;
+    url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.1/llvm-project-17.0.1.src.tar.xz";
+    sha256 = "b0e42aafc01ece2ca2b42e3526f54bebc4b1f1dc8de6e34f46a0446a13e882b9";
   };
 in
   mkDerivation {
