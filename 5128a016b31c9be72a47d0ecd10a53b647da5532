@@ -6,4 +6,4 @@ Built-on: loquat
 
 Built-on: lychee
 
-Built-on: lychee USING_CCACHE=1
+Built-on: lychee USE_CCACHE=1
