@@ -1,3 +1,5 @@
 Built-on: cocoa USE_CCACHE=1
 
 Built-on: lychee USE_CCACHE=1
+
+Built-on: cocoa
