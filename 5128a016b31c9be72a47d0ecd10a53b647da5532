@@ -5,3 +5,5 @@ Built-on: cocoa USE_CCACHE=1
 Built-on: loquat
 
 Built-on: lychee
+
+Built-on: lychee USING_CCACHE=1
