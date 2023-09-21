@@ -7,3 +7,5 @@ Built-on: zilchos-core
 Built-on: lychee
 
 Built-on: lychee USE_CCACHE=1
+
+Built-on: loquat
