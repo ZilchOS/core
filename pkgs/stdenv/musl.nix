@@ -19,6 +19,8 @@ stdenv.mkDerivation {
               src/stdio/popen.c src/process/system.c
       sed -i 's|execl("/bin/sh", "sh", "-c",|execlp("sh", "-c",|'\
               src/misc/wordexp.c
+      # avoid absolute path references
+      sed -i 's/__FILE__/__FILE_NAME__/' include/assert.h
   '';
 
   extraConfigureFlags = [ "CFLAGS=-O2" ];

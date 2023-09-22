@@ -62,6 +62,7 @@ let
 
   pkgs = {
     inherit bootstrap-musl bootstrap-toolchain bootstrap-busybox;
+    early-clang = _bootstrap.early-clang;
     inherit stdenv;
     inherit (stdenv) musl clang busybox;
 

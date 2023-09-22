@@ -11,6 +11,7 @@ in
     inherit name;
     buildInputs = [ busybox toolchain ];
     script = ''
+        mkdir build-dir; cd build-dir
       # unpack:
         unpack ${source-tarball-gnumake}
       # fixup:
@@ -52,7 +53,7 @@ in
       # test:
         mv make make-intermediate
         ./make-intermediate -j $NPROC clean
-        ./make-intermediate -j $NPROC
+        ./make-intermediate -j $NPROC CFLAGS=-ffile-prefix-map=$(pwd)=/builddir/
       # install:
         ./make -j $NPROC install
       # wrap:
@@ -62,5 +63,7 @@ in
         echo "exec $out/bin/.make.unwrapped SHELL=\$SHELL \"\$@\"" \
           >> $out/bin/make
         chmod +x $out/bin/make
+      # check for build path leaks:
+        ( ! grep -RF $(pwd) $out )
     '';
   }

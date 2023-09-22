@@ -21,6 +21,7 @@ let
     eval "$_pathSetup"
     eval "$_pkgConfigSetup"
 
+    mkdir build-dir; cd build-dir
     set +u
   '' + (if ! use-ccache then "" else ''
     eval "$_ccacheSetup"
@@ -30,7 +31,18 @@ let
       ${busybox}/bin/ash -uex "''${${phaseName}Path}"
       echo "${phaseName}: exit code $?"
     fi
-  '') phaseNames ));
+  '') phaseNames )) + ''
+    for output in $outputs; do
+      opath=$(eval "echo $"$output"")
+      echo "check output "$output" for build path leaks:"
+      if grep -RF $(pwd) $opath; then
+        exit 1
+      else
+        echo "OK, $(pwd) not found"
+      fi
+      echo "check output "$output" for build path leaks: OK, no leaks found"
+    done
+  '';
 
   writeFile = { name, contents }: mkCaDerivation {
     inherit name contents;

@@ -12,6 +12,7 @@ in
     inherit name;
     buildInputs = [ busybox toolchain cmake gnumake python ];
     script = ''
+        mkdir build-dir; cd build-dir
         export SHELL=${busybox}/bin/ash
         # llvm cmake configuration should pick up ccache automatically from PATH
         export PATH="$PATH:/ccache/bin"
@@ -38,10 +39,10 @@ in
           llvm/cmake/modules/AddLLVM.cmake
         sed -i 's|numShards = 32;|numShards = 1;|' lld/*/SyntheticSections.*
         sed -i 's|numShards = 256;|numShards = 1;|' lld/*/ICF.cpp
+        sed -i 's|__FILE__|__FILE_NAME__|' compiler-rt/lib/builtins/int_util.h
       # figure out includes:
-        C_INCLUDES="$SYSROOT/include"
-        C_INCLUDES="$C_INCLUDES:${linux-headers}/include"
-        EXTRA_INCL="$(pwd)/extra_includes"
+        KHDR=${linux-headers}/include
+        EXTRA_INCL=$(pwd)/extra_includes
         mkdir -p $EXTRA_INCL
         cp clang/lib/Headers/*intrin*.h $EXTRA_INCL/
         cp clang/lib/Headers/mm_malloc.h $EXTRA_INCL/
@@ -57,7 +58,6 @@ in
         add_opt LLVM_OPTIMIZED_TABLEGEN=YES
         add_opt LLVM_CCACHE_BUILD=$USE_CCACHE
         add_opt DEFAULT_SYSROOT=$SYSROOT
-        add_opt C_INCLUDE_DIRS=$C_INCLUDES
         add_opt CMAKE_INSTALL_PREFIX=$out
         add_opt LLVM_INSTALL_BINUTILS_SYMLINKS=YES
         add_opt LLVM_INSTALL_CCTOOLS_SYMLINKS=YES
@@ -92,21 +92,24 @@ in
         add_opt LIBCXX_USE_COMPILER_RT=YES
         add_opt LIBCXX_INCLUDE_BENCHMARKS=NO
         add_opt LIBCXX_CXX_ABI=libcxxabi
+        add_opt LIBCXX_ADDITIONAL_COMPILE_FLAGS=-I$KHDR
         add_opt LIBCXXABI_USE_COMPILER_RT=YES
         add_opt LIBCXXABI_USE_LLVM_UNWINDER=YES
         add_opt LLVM_INSTALL_TOOLCHAIN_ONLY=YES
         add_opt LIBUNWIND_USE_COMPILER_RT=YES
         add_opt LLVM_ENABLE_THREADS=NO
+        REWRITE="-ffile-prefix-map=$(pwd)=/builddir/"
+        CFLAGS="-isystem $EXTRA_INCL $REWRITE"
         cmake -S llvm -B build -G 'Unix Makefiles' \
           -DLLVM_ENABLE_PROJECTS='clang;lld' \
           -DLLVM_ENABLE_RUNTIMES='compiler-rt;libcxx;libcxxabi;libunwind' \
-          "-DCMAKE_C_FLAGS=-isystem $EXTRA_INCL" \
-          "-DCMAKE_CXX_FLAGS=-isystem $EXTRA_INCL" \
-          "-DBOOTSTRAP_CMAKE_C_FLAGS=-isystem $EXTRA_INCL" \
-          "-DBOOTSTRAP_CMAKE_CXX_FLAGS=-isystem $EXTRA_INCL" \
+          "-DCMAKE_C_FLAGS=$CFLAGS" \
+          "-DCMAKE_CXX_FLAGS=$CFLAGS" \
+          "-DBOOTSTRAP_CMAKE_C_FLAGS=$CFLAGS" \
+          "-DBOOTSTRAP_CMAKE_CXX_FLAGS=$CFLAGS" \
           -DCLANG_ENABLE_BOOTSTRAP=YES $BOTH_STAGES_OPTS
       # build (stage1):
-        make SHELL=$SHELL -C build -j $NPROC clang lld runtimes
+        make SHELL=$SHELL -C build -j $NPROC
       # build/install (stage2):
         NEW_LIB_DIR="$(pwd)/build/lib/x86_64-unknown-linux-musl"
         export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$NEW_LIB_DIR"
@@ -116,7 +119,9 @@ in
         ln -s $out/bin/clang++ $out/bin/c++
         ln -s $out/bin/clang-cpp $out/bin/cpp
         ln -s $out/bin/lld $out/bin/ld
-      # mix new stuff into sysroot
+      # mix new stuff into sysroot:
         ln -s $out/lib/* $out/sysroot/lib/
+      # check for build path leaks:
+        ( ! grep -RF $(pwd) $out )
     '';
   }

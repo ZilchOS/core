@@ -28,6 +28,7 @@ stdenv.mkDerivation {
       llvm/cmake/modules/AddLLVM.cmake
     sed -i 's|numShards = 32;|numShards = 1;|' lld/*/SyntheticSections.*
     sed -i 's|numShards = 256;|numShards = 1;|' lld/*/ICF.cpp
+    sed -i 's|__FILE__|__FILE_NAME__|' compiler-rt/lib/builtins/int_util.h
   '';
 
   preConfigure = ''
@@ -48,7 +49,6 @@ stdenv.mkDerivation {
     mkdir -p sysroot/lib sysroot/include
     ln -s ${stdenv.musl}/lib/* sysroot/lib/
     ln -s ${stdenv.musl}/include/* sysroot/include/
-    ln -s ${linux-headers}/include sysroot/phantom-linux-headers
 
     # figure out includes:
     KHDR=${linux-headers}/include
@@ -61,16 +61,19 @@ stdenv.mkDerivation {
     export LD_LIBRARY_PATH=${python}/lib:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
 
+    REWRITE="-ffile-prefix-map=$(pwd)=/builddir/"
+    CFLAGS="--sysroot=$(pwd)/sysroot -isystem $EXTRA_INCL $REWRITE"
+    LDFLAGS="-Wl,--dynamic-linker=$LOADER"
     cmake -S llvm -B build -G 'Unix Makefiles' \
       -DCMAKE_ASM_COMPILER=${stdenv.clang}/bin/clang \
       -DCMAKE_C_COMPILER=${stdenv.clang}/bin/clang \
       -DCMAKE_CXX_COMPILER=${stdenv.clang}/bin/clang++ \
       -DLLVM_ENABLE_PROJECTS='clang;lld' \
       -DLLVM_ENABLE_RUNTIMES='compiler-rt;libcxx;libcxxabi;libunwind' \
-      -DCMAKE_C_FLAGS="--sysroot=$(pwd)/sysroot -I$EXTRA_INCL" \
-      -DCMAKE_CXX_FLAGS="--sysroot=$(pwd)/sysroot -I$KHDR -I$EXTRA_INCL" \
-      -DCMAKE_C_LINK_FLAGS="-Wl,--dynamic-linker=$LOADER" \
-      -DCMAKE_CXX_LINK_FLAGS="-Wl,--dynamic-linker=$LOADER" \
+      -DCMAKE_C_FLAGS="$CFLAGS" \
+      -DCMAKE_CXX_FLAGS="$CFLAGS" \
+      -DCMAKE_C_LINK_FLAGS="$LDFLAGS" \
+      -DCMAKE_CXX_LINK_FLAGS="$LDFLAGS" \
       -DLLVM_BUILD_LLVM_DYLIB=YES \
       -DLLVM_LINK_LLVM_DYLIB=YES \
       -DCLANG_LINK_LLVM_DYLIB=YES \
@@ -78,7 +81,6 @@ stdenv.mkDerivation {
       -DLLVM_OPTIMIZED_TABLEGEN=YES \
       -DLLVM_CCACHE_BUILD=$USE_CCACHE \
       -DDEFAULT_SYSROOT=$sysroot \
-      -DC_INCLUDE_DIRS=$sysroot/include:$(pwd)/sysroot/phantom-linux-headers \
       -DCMAKE_INSTALL_PREFIX=$toolchain \
       -DLLVM_INSTALL_BINUTILS_SYMLINKS=YES \
       -DLLVM_INSTALL_CCTOOLS_SYMLINKS=YES \
@@ -110,10 +112,10 @@ stdenv.mkDerivation {
       -DCLANG_DEFAULT_LINKER=lld \
       -DCLANG_DEFAULT_RTLIB=compiler-rt \
       -DLIBCXX_HAS_MUSL_LIBC=YES \
-      -DLIBCXX_INCLUDE_BENCHMARKS=NO \
-      -DLIBCXX_CXX_ABI=libcxxabi \
       -DLIBCXX_USE_COMPILER_RT=YES \
       -DLIBCXX_INCLUDE_BENCHMARKS=NO \
+      -DLIBCXX_CXX_ABI=libcxxabi \
+      -DLIBCXX_ADDITIONAL_COMPILE_FLAGS=-I$KHDR \
       -DLIBCXXABI_USE_COMPILER_RT=YES \
       -DLIBCXXABI_USE_LLVM_UNWINDER=YES \
       -DLLVM_INSTALL_TOOLCHAIN_ONLY=YES \
@@ -128,7 +130,7 @@ stdenv.mkDerivation {
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
 
     # llvm cmake configuration should pick up ccache automatically from PATH
-    make -C build -j $NPROC clang lld runtimes
+    make -C build -j $NPROC
   '';
 
   installPhase = ''
@@ -136,7 +138,7 @@ stdenv.mkDerivation {
     export LD_LIBRARY_PATH=${python}/lib:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
     export SHELL=${stdenv.busybox}/bin/ash
-    make -C build install/strip
+    make -C build -j $NPROC install/strip
   '';
 
   postInstall = ''
@@ -153,7 +155,6 @@ stdenv.mkDerivation {
     cp -r $toolchain/lib/x86_64-unknown-linux-musl/* $sysroot/lib/
     cp -r $toolchain/lib/clang $sysroot/lib/
     cp -r $toolchain/include/x86_64-unknown-linux-musl $sysroot/include/
-    rm $sysroot/phantom-linux-headers
   '';
 
   fixupPhase = "";

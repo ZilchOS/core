@@ -46,7 +46,8 @@ stdenv.mkDerivation {
   installPhase = ''
     export PATH=$(pwd)/aliases:$PATH
     make install-strip
-  '';  # sidesteps the MD5 -> binaries problem
+    rm $out/lib/*.la  # reference builddir
+  '';  # stripping sidesteps the MD5 -> binaries problem
 
   allowedRequisites = [ "out" stdenv.musl stdenv.clang.sysroot ];
   allowedReferences = [ "out" stdenv.musl stdenv.clang.sysroot ];
