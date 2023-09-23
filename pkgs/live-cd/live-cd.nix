@@ -32,13 +32,13 @@ in
       mount -t proc proc /proc
       mount -t sysfs sysfs /sys
       mkdir /dev/pts; mount -t devpts none /dev/pts -o mode=620
+      mkdir /dev/shm
       mkdir /tmp
       mkdir /bin; ln -s ${busybox}/bin/ash /bin/sh  # TODO: get rid of
       if ip a | grep -q eth0:; then
         echo '127.0.0.1 localhost' > /etc/hosts
         udhcpc
       fi
-      export NIX_FORCE_BUILD_PATH=/build
       setsid ash -c 'getty -n -l ${busybox}/bin/ash 0 /dev/tty0 &'
       exec setsid cttyhack ash
       EOF
