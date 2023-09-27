@@ -11,6 +11,10 @@
 
 set -ue
 
+# First build bootstrap-from-tcc untainted, locally, just in case
+nix build --option substituters '' \
+    '.#bootstrap-musl' '.#bootstrap-toolchain' '.#bootstrap-busybox'
+
 CCACHE_HOST=/var/cache/ccache
 mkdir -p $CCACHE_HOST/data
 sudo chgrp nixbld $CCACHE_HOST $CCACHE_HOST/data

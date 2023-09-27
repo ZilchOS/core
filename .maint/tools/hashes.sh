@@ -6,6 +6,10 @@
 
 set -ue
 
+# First build bootstrap-from-tcc untainted, locally
+nix build --no-link --option substituters '' \
+    '.#bootstrap-musl' '.#bootstrap-toolchain' '.#bootstrap-busybox'
+
 if [ "$SERIAL" != 1 ]; then
     # first build everything from .maint/hashes in parallel
     targets=''
