@@ -3,8 +3,16 @@
 : ${UPDATE=0}
 : ${USE_CCACHE=0}
 : ${SERIAL=0}
+: ${SKIP_BOOTSTRAP=0}
 
 set -ue
+
+# First build bootstrap-from-tcc untainted, locally, just in case
+if [ "$USE_CCACHE" = 1 ] && [ "$SKIP_BOOTSTRAP" != 1 ]; then
+    nix build --no-link --option substituters '' --option warn-dirty false \
+        '.#bootstrap-musl' '.#bootstrap-toolchain' '.#bootstrap-busybox'
+fi
+export SKIP_BOOTSTRAP=1
 
 if [ "$SERIAL" != 1 ]; then
     # first build everything from .maint/hashes in parallel

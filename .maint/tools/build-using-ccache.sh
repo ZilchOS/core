@@ -9,7 +9,15 @@
 
 # example: ./build-using-ccache.sh musl -L
 
+: ${SKIP_BOOTSTRAP=0}
+
 set -ue
+
+# First build bootstrap-from-tcc untainted, locally, just in case
+if [ "$SKIP_BOOTSTRAP" != 1 ]; then
+	nix build --no-link --option substituters '' --option warn-dirty false \
+	    '.#bootstrap-musl' '.#bootstrap-toolchain' '.#bootstrap-busybox'
+fi
 
 CCACHE_HOST=/var/cache/ccache
 mkdir -p $CCACHE_HOST/data
