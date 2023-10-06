@@ -1,7 +1,7 @@
-Built-on: cocoa USE_CCACHE=1
+Built-on: cocoa nix=nixos USE_CCACHE=1
 
-Built-on: lychee USE_CCACHE=1
+Built-on: lychee nix=nixos USE_CCACHE=1
 
-Built-on: cocoa
+Built-on: cocoa nix=nixos
 
-Built-on: loquat
+Built-on: loquat nix=nixos
