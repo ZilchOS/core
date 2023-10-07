@@ -35,7 +35,7 @@ let
     for output in $outputs; do
       opath=$(eval "echo $"$output"")
       echo "check output "$output" for build path leaks:"
-      if grep -RF $(pwd) $opath; then
+      if grep -rF $(pwd) $opath; then
         exit 1
       else
         echo "OK, $(pwd) not found"

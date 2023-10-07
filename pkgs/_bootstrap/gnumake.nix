@@ -64,6 +64,6 @@ in
           >> $out/bin/make
         chmod +x $out/bin/make
       # check for build path leaks:
-        ( ! grep -RF $(pwd) $out )
+        ( ! grep -rF $(pwd) $out )
     '';
   }

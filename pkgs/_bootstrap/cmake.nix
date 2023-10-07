@@ -41,6 +41,6 @@ in
       # install:
         make SHELL=$SHELL -j $NPROC install/strip
       # check for build path leaks:
-        ( ! grep -RF $(pwd) $out )
+        ( ! grep -rF $(pwd) $out )
     '';
   }

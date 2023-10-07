@@ -49,6 +49,6 @@ in
           $out/lib/python3.*/_sysconfigdata__*.py \
           $out/lib/python3.*/config-3.11-x86_64-linux-musl/Makefile
       # check for build path leaks:
-        ( ! grep -RF $(pwd) $out )
+        ( ! grep -rF $(pwd) $out )
     '';
   }
