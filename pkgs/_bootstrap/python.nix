@@ -26,28 +26,38 @@ in
         mv Lib/compileall.py Lib/compileall.py.bak
         echo 'import sys; sys.exit(0)' > Lib/compileall.py
         chmod +x Lib/compileall.py
-        sed -i 's|__FILE__|"__FILE__"|' \
+        sed -i 's|__FILE__|__FILE_NAME__|' \
           Python/errors.c \
           Include/pyerrors.h \
           Include/cpython/object.h \
           Modules/pyexpat.c
+        sed -i 's|TIME __TIME__|TIME "xx:xx:xx"|' Modules/getbuildinfo.c
+        sed -i 's|DATE __DATE__|DATE "xx/xx/xx"|' Modules/getbuildinfo.c
+        # different build path length leads to different wrapping. avoid
+        sed -i 's|vars, stream=f|vars, stream=f, width=2**24|' Lib/sysconfig.py
       # configure:
         ash configure \
+          ac_cv_broken_sem_getvalue=yes \
+          ac_cv_posix_semaphores_enabled=no \
+          OPT='-DNDEBUG -fwrapv -O3 -Wall' \
           --without-static-libpython \
           --build x86_64-linux-musl \
           --prefix=$out \
           --enable-shared \
           --with-ensurepip=no
+        # ensure reproducibility in case of no /dev/shm
+        grep 'define POSIX_SEMAPHORES_NOT_ENABLED 1' pyconfig.h
+        grep 'define HAVE_BROKEN_SEM_GETVALUE 1' pyconfig.h
       # build:
         make SHELL=$SHELL -j $NPROC CFLAGS="-ffile-prefix-map=$(pwd)=/builddir/"
       # install:
         make SHELL=$SHELL -j $NPROC install
         # restore compileall just in case
         cat Lib/compileall.py.bak > $out/lib/python3.11/compileall.py
-      # strip builddir mentions
-        sed -i "s|$(pwd)|...|" \
+      # strip builddir mentions:
+        sed -i "s|$(pwd)|...|g" \
           $out/lib/python3.*/_sysconfigdata__*.py \
-          $out/lib/python3.*/config-3.11-x86_64-linux-musl/Makefile
+          $out/lib/python3.*/config-3.*-x86_64-linux-musl/Makefile
       # check for build path leaks:
         ( ! grep -rF $(pwd) $out )
     '';
