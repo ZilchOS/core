@@ -1,5 +1,5 @@
 5hasqad9ih2fmn6ma9vww2jdjqjgzvxs bootstrap-musl
-27d90h31lw204lxb1nb7z65zy5wgdqpc bootstrap-toolchain
+cr1bxa6hjz1baygh7kdwmhgxvypqcvag bootstrap-toolchain
 2f7xfn3x1bgpy1wdrnn48z3c1bagwggh bootstrap-busybox
 w4gcaxrzw0jg1darbh5m1kqc2chi916l stdenv.musl
 nl6ki5lh9m3nqj10pljwvfrbihpcin3k stdenv.clang^toolchain
