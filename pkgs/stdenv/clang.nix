@@ -1,14 +1,16 @@
 { pname ? "clang", fetchurl, stdenv, gnumake, linux-headers, cmake, python}:
 
-stdenv.mkDerivation {
-  pname = pname;
-  version = "17.0.1";
-
+let
   src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/llvm-project-17.0.1.src.tar.xz;
     url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.1/llvm-project-17.0.1.src.tar.xz";
     sha256 = "b0e42aafc01ece2ca2b42e3526f54bebc4b1f1dc8de6e34f46a0446a13e882b9";
   };
+in
+
+stdenv.mkDerivation {
+  inherit pname src;
+  version = "17.0.1";
 
   buildInputs = [ stdenv.busybox gnumake cmake python ];
                 # stdenv.clang not added to PATH on purpose to avoid confusion
@@ -28,7 +30,10 @@ stdenv.mkDerivation {
       llvm/cmake/modules/AddLLVM.cmake
     sed -i 's|numShards = 32;|numShards = 1;|' lld/*/SyntheticSections.*
     sed -i 's|numShards = 256;|numShards = 1;|' lld/*/ICF.cpp
-    sed -i 's|__FILE__|__FILE_NAME__|' compiler-rt/lib/builtins/int_util.h
+    sed -i 's|__FILE__|__FILE_NAME__|' \
+      libcxx/src/verbose_abort.cpp \
+      libcxxabi/src/abort_message.cpp \
+      compiler-rt/lib/builtins/int_util.h
   '';
 
   preConfigure = ''
@@ -40,6 +45,15 @@ stdenv.mkDerivation {
   '';
 
   configurePhase = ''
+    # Shared libs are not relinked on install. Instead, their rpath
+    # is erased with RPATH_SET: `Set runtime path of
+    # "/nix/store/.../lib/x86_64-unknown-linux-musl/libc++.so.1.0" to ""`
+    # One (hacky) workaround to that is using a constant-len build-dir.
+    build_dir=build; expr "$(pwd)/$build_dir)" '<=' 134
+    while ! echo "$(pwd)/$build_dir" | wc -c | grep -Fqx 134; do
+      build_dir="$build_dir."
+    done; mkdir $build_dir; expr "$(echo $(pwd)/build* | wc -c)" '==' 134
+
     export SHELL=${stdenv.busybox}/bin/ash
     LOADER=${stdenv.musl}/lib/libc.so
 
@@ -59,12 +73,12 @@ stdenv.mkDerivation {
 
     export LD_LIBRARY_PATH="${stdenv.musl}/lib:${stdenv.clang}/lib"
     export LD_LIBRARY_PATH=${python}/lib:$LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/$build_dir/lib" # libLLVM
 
     REWRITE="-ffile-prefix-map=$(pwd)=/builddir/"
     CFLAGS="--sysroot=$(pwd)/sysroot -isystem $EXTRA_INCL $REWRITE"
     LDFLAGS="-Wl,--dynamic-linker=$LOADER"
-    cmake -S llvm -B build -G 'Unix Makefiles' \
+    cmake -S llvm -B build* -G 'Unix Makefiles' \
       -DCMAKE_ASM_COMPILER=${stdenv.clang}/bin/clang \
       -DCMAKE_C_COMPILER=${stdenv.clang}/bin/clang \
       -DCMAKE_CXX_COMPILER=${stdenv.clang}/bin/clang++ \
@@ -124,21 +138,23 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
+    build_dir=$(echo build*)
     export SHELL=${stdenv.busybox}/bin/ash
     export LD_LIBRARY_PATH="${stdenv.musl}/lib:${stdenv.clang}/lib"
     export LD_LIBRARY_PATH=${python}/lib:$LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/$build_dir/lib" # libLLVM
 
     # llvm cmake configuration should pick up ccache automatically from PATH
-    make -C build -j $NPROC
+    make -C build* -j $NPROC
   '';
 
   installPhase = ''
+    build_dir=$(echo build*)
+    export SHELL=${stdenv.busybox}/bin/ash
     export LD_LIBRARY_PATH="${stdenv.musl}/lib:${stdenv.clang}/lib"
     export LD_LIBRARY_PATH=${python}/lib:$LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/build/lib" # libLLVM
-    export SHELL=${stdenv.busybox}/bin/ash
-    make -C build -j $NPROC install/strip
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/$build_dir/lib" # libLLVM
+    make -C build* -j $NPROC install/strip
   '';
 
   postInstall = ''

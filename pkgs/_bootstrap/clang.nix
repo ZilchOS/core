@@ -12,7 +12,15 @@ in
     inherit name;
     buildInputs = [ busybox toolchain cmake gnumake python ];
     script = ''
-        mkdir build-dir; cd build-dir
+        # Shared libs are not relinked on install. Instead, their rpath
+        # is erased with RPATH_SET: `Set runtime path of
+        # "/nix/store/.../lib/x86_64-unknown-linux-musl/libc++.so.1.0" to ""`
+        # One (hacky) workaround to that is using a constant-len build-dir.
+        build_dir=build-dir; expr "$(pwd)/$build_dir)" '<=' 128
+        while ! echo "$(pwd)/$build_dir" | wc -c | grep -Fqx 128; do
+          build_dir="$build_dir."
+        done; expr "$(echo $(pwd)/$build_dir | wc -c)" '==' 128
+        mkdir $build_dir; cd $build_dir
         export SHELL=${busybox}/bin/ash
         # llvm cmake configuration should pick up ccache automatically from PATH
         export PATH="$PATH:/ccache/bin"
@@ -39,7 +47,10 @@ in
           llvm/cmake/modules/AddLLVM.cmake
         sed -i 's|numShards = 32;|numShards = 1;|' lld/*/SyntheticSections.*
         sed -i 's|numShards = 256;|numShards = 1;|' lld/*/ICF.cpp
-        sed -i 's|__FILE__|__FILE_NAME__|' compiler-rt/lib/builtins/int_util.h
+        sed -i 's|__FILE__|__FILE_NAME__|' \
+          libcxx/src/verbose_abort.cpp \
+          libcxxabi/src/abort_message.cpp \
+          compiler-rt/lib/builtins/int_util.h
       # figure out includes:
         KHDR=${linux-headers}/include
         EXTRA_INCL=$(pwd)/extra_includes
