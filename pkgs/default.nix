@@ -62,7 +62,8 @@ let
 
   pkgs = {
     inherit bootstrap-musl bootstrap-toolchain bootstrap-busybox;
-    early-clang = _bootstrap.early-clang;
+    inherit (_bootstrap) early-gnumake early-linux-headers;
+    inherit (_bootstrap) early-cmake early-python early-clang;
     inherit stdenv;
     inherit (stdenv) musl clang busybox;
 

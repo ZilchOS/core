@@ -1,6 +1,11 @@
 5hasqad9ih2fmn6ma9vww2jdjqjgzvxs bootstrap-musl
 cr1bxa6hjz1baygh7kdwmhgxvypqcvag bootstrap-toolchain
 2f7xfn3x1bgpy1wdrnn48z3c1bagwggh bootstrap-busybox
+862zkf45ij0165v2hyihi4kvbnn33vrw early-gnumake
+mjcvva3q8xb8i7nkas4csx8xzmrgikbb early-linux-headers
+rl4q4f5cw6hc1j86rb18b1ywhirsnjwc early-python
+m5yng9gl475l9xdmlhahf63sjclsb43m early-cmake
+lfy70ya79ly63hgw98kxs3jm9jskkp48 early-clang
 w4gcaxrzw0jg1darbh5m1kqc2chi916l stdenv.musl
 b9hw86jiv5633wxnqmgfvppjzj4gyb42 stdenv.clang^toolchain
 y2cxnwccxv568n1qyq0k8hhd46paakyh stdenv.clang^sysroot
