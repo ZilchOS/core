@@ -1,1 +1,3 @@
 Built-on: loquat nix=nixos
+
+Built-on: cocoa nix=nixos
