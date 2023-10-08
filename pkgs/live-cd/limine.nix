@@ -18,11 +18,16 @@ stdenv.mkDerivation {
     sed -i 's|/bin/sh|${stdenv.busybox}/bin/ash|' \
       configure libgcc-binaries/make_toolchain.sh common/gensyms.sh \
       host/hgen.sh build-aux/install-sh freestanding-toolchain
+    sed -i 's|-F dwarf -g||' common/GNUmakefile
+    sed -i '/^    -g \\$/d' common/GNUmakefile
+    sed -i 's|-g -O2 -pipe|-O2 -pipe|' host/Makefile
   '';
 
   extraConfigureFlags = [
     "CC_FOR_TARGET=cc"
     "LD_FOR_TARGET=ld"
+    "CFLAGS='-O2 -pipe'"
+    "CFLAGS_FOR_TARGET='-O2 -pipe'"
     "--enable-bios"
     "--enable-bios-cd"
     "--enable-uefi-cd"
