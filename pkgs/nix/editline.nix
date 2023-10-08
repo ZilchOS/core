@@ -1,13 +1,10 @@
 { name ? "editline", stdenv, fetchurl, gnumake }:
 
-#> FETCH df223b3333a545fddbc67b49ded3d242c66fadf7a04beb3ada20957fcd1ffc0e
-#>  FROM https://github.com/troglobit/editline/releases/download/1.17.1/editline-1.17.1.tar.xz
-
 stdenv.mkDerivation {
   pname = name;
   version = "1.17.1";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/editline-1.17.1.tar.xz;
     url = "https://github.com/troglobit/editline/releases/download/1.17.1/editline-1.17.1.tar.xz";
     sha256 = "df223b3333a545fddbc67b49ded3d242c66fadf7a04beb3ada20957fcd1ffc0e";

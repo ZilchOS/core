@@ -1,13 +1,10 @@
 { name ? "boost", stdenv, fetchurl, gnumake, linux-headers }:
 
-#> FETCH 6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e
-#>  FROM https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
-
 stdenv.mkDerivation {
   pname = name;
   version = "1.83.0";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/boost_1_83_0.tar.bz2;
     url = "https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2";
     sha256 = "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e";

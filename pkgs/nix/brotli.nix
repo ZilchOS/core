@@ -1,14 +1,10 @@
 { name ? "brotli", stdenv, fetchurl, gnumake }:
 
-#> FETCH f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46
-#>  FROM https://github.com/google/brotli/archive/refs/tags/v1.0.9.tar.gz
-#>    AS brotli-1.0.9.tar.gz
-
 stdenv.mkDerivation {
   pname = name;
   version = "1.0.9";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/brotli-1.0.9.tar.gz;
     url = "https://github.com/google/brotli/archive/refs/tags/v1.0.9.tar.gz";
     sha256 = "f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46";

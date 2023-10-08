@@ -2,7 +2,7 @@
 , toolchain, busybox, musl, gnumake, linux-headers, cmake, python }:
 
 let
-  source-tarball-llvm = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/llvm-project-17.0.1.src.tar.xz;
     url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.1/llvm-project-17.0.1.src.tar.xz";
     sha256 = "b0e42aafc01ece2ca2b42e3526f54bebc4b1f1dc8de6e34f46a0446a13e882b9";
@@ -23,7 +23,7 @@ in
         ln -s ${musl}/lib/* $SYSROOT/lib/
         ln -s ${musl}/include/* $SYSROOT/include/
       # unpack:
-        unpack ${source-tarball-llvm}
+        unpack ${src}
       # fixup:
         sed -i "s|COMMAND sh|COMMAND ${busybox}/bin/ash|" \
           llvm/cmake/modules/GetHostTriple.cmake clang/CMakeLists.txt

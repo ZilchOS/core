@@ -1,13 +1,10 @@
 { name ? "nasm", stdenv, fetchurl, gnumake }:
 
-#> FETCH c77745f4802375efeee2ec5c0ad6b7f037ea9c87c92b149a9637ff099f162558
-#>  FROM https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz
-
 stdenv.mkDerivation {
   pname = name;
   version = "2.16.01";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/nasm-2.16.01.tar.xz;
     url = "https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz";
     sha256 = "c77745f4802375efeee2ec5c0ad6b7f037ea9c87c92b149a9637ff099f162558";

@@ -1,7 +1,7 @@
 { name ? "linux-headers", fetchurl, mkDerivation, toolchain, busybox, gnumake }:
 
 let
-  source-tarball-linux = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/linux-6.4.12.tar.xz;
     url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.4.12.tar.xz";
     sha256 = "cca91be956fe081f8f6da72034cded96fe35a50be4bfb7e103e354aa2159a674";
@@ -13,7 +13,7 @@ in
     script = ''
         mkdir build-dir; cd build-dir
       # unpack:
-        unpack ${source-tarball-linux} \
+        unpack ${src} \
           linux-6.4.12/Makefile \
           linux-6.4.12/arch/x86 \
           linux-6.4.12/include \

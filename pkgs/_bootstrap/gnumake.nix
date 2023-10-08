@@ -1,7 +1,7 @@
 { name ? "gnumake", fetchurl, mkDerivation, toolchain, busybox }:
 
 let
-  source-tarball-gnumake = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/make-4.4.1.tar.gz;
     url = "http://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz";
     sha256 = "dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3";
@@ -13,7 +13,7 @@ in
     script = ''
         mkdir build-dir; cd build-dir
       # unpack:
-        unpack ${source-tarball-gnumake}
+        unpack ${src}
       # fixup:
         sed -i 's|/bin/sh|${busybox}/bin/ash|' \
                 src/job.c build-aux/install-sh po/Makefile.in.in

@@ -5,7 +5,7 @@ stdenv.mkDerivation {
   pname = name;
   version = "4.4.1";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format  # parsed by other tooling, must be of fixed format
     # local = /downloads/make-4.4.1.tar.gz;
     url = "http://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz";
     sha256 = "dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3";

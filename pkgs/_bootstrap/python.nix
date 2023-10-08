@@ -1,7 +1,7 @@
 { name ? "python", fetchurl, mkDerivation, toolchain, busybox, gnumake }:
 
 let
-  source-tarball-python = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/Python-3.11.5.tar.xz;
     url = "https://www.python.org/ftp/python/3.11.5/Python-3.11.5.tar.xz";
     sha256 = "85cd12e9cf1d6d5a45f17f7afe1cebe7ee628d3282281c492e86adf636defa3f";
@@ -17,7 +17,7 @@ in
         mkdir aliases; ln -s ${busybox}/bin/ash aliases/sh
         export PATH="$(pwd)/aliases:$PATH"
       # unpack:
-        unpack ${source-tarball-python}
+        unpack ${src}
       # fixup:
         sed -i 's|/bin/sh|${busybox}/bin/ash|' configure
         # the precompiled pyc files aren't reproducible,

@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   inherit pname;
   version = "1.36.1";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/busybox-1.36.1.tar.bz2;
     url = "https://busybox.net/downloads/busybox-1.36.1.tar.bz2";
     sha256 = "b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314";

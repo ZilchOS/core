@@ -1,13 +1,10 @@
 { name ? "limine", stdenv, fetchurl, gnumake, nasm, gnubinutils, gnumtools }:
 
-#> FETCH ddd417f9caab3ef0f3031b938815a5c33367c3a50c09830138d208bd3126c98f
-#>  FROM https://github.com/limine-bootloader/limine/releases/download/v5.20230830.0/limine-5.20230830.0.tar.xz
-
 stdenv.mkDerivation {
   pname = name;
   version = "5.20230830.0";
 
-  src = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/limine-5.20230830.0.tar.xz;
     url = "https://github.com/limine-bootloader/limine/releases/download/v5.20230830.0/limine-5.20230830.0.tar.xz";
     sha256 = "ddd417f9caab3ef0f3031b938815a5c33367c3a50c09830138d208bd3126c98f";

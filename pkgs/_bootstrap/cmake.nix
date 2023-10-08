@@ -2,7 +2,7 @@
 , toolchain, busybox, gnumake, linux-headers} :
 
 let
-  source-tarball-cmake = fetchurl {
+  src = fetchurl {  # parsed by other tooling, must be of fixed format
     # local = /downloads/cmake-3.27.4.tar.gz;
     url = "https://github.com/Kitware/CMake/releases/download/v3.27.4/cmake-3.27.4.tar.gz";
     sha256 = "0a905ca8635ca81aa152e123bdde7e54cbe764fdd9a70d62af44cad8b92967af";
@@ -15,7 +15,7 @@ in
         mkdir build-dir; cd build-dir
         export SHELL=${busybox}/bin/ash
       # unpack:
-        unpack ${source-tarball-cmake}
+        unpack ${src}
       # fixup:
         sed -i 's|/bin/sh|${busybox}/bin/ash|' bootstrap
         sed -i 's|__FILE__|__FILE_NAME__|' \
