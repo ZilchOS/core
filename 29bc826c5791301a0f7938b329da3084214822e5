@@ -1,1 +1,3 @@
 Built-on: self nix=zilchos
+
+Built-on: loquat nix=nixos
