@@ -3,3 +3,5 @@ Built-on: cocoa nix=bootstrap
 Built-on: cocoa nix=nixos
 
 Built-on: loquat nix=nixos
+
+Built-on: fig nix=bootstrap
