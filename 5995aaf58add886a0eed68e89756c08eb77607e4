@@ -5,3 +5,5 @@ Built-on: cocoa nix=nixos
 Built-on: loquat nix=nixos
 
 Built-on: fig nix=bootstrap
+
+Built-on: self nix=zilchos
