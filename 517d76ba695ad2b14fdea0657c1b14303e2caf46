@@ -1,1 +1,3 @@
 Built-on: cocoa nix=nixos
+
+Built-on: cocoa nix=nixos USE_CCACHE=1
