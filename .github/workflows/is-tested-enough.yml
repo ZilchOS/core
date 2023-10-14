@@ -1,0 +1,16 @@
+name: "git notes Built-on: checks"
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+jobs:
+  is-tested-enough:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: .maint/tools/is-tested-enough
