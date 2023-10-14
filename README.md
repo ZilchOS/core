@@ -64,3 +64,24 @@ Yeah, maybe not, but here's a toy Nix-based OS to play with anyway.
 * become something like Nix pills, but for building an OS
 * become a stepping stone to a tad richer distro
   (like, one with systemd or *gasp* git)
+
+## Reproducibility
+
+Reproducibility is deeply cared about,
+but it's a constant struggle and one cannot foresee everything.
+
+Derivations are checked to built to the same hashes
+when built in three different ways:
+
+* `nix=nixos` are just builds using Nix from a relatively recent NixOS unstable.
+  Verification is done with `.maint/tools/hashes`.
+* `nix=bootstrap` are builds make with Nix built during bootstrap-from-tcc's
+  stage3. They don't use sandboxing and run in a peculiar environment.
+  See `helpers/maint/build-custom-stage5` in bootstrap-from-tcc.
+  The used commit of bootstrap-from-tcc is the one from `flake.lock`.
+* `nix=zilchos` are builds done inside a ZilchOS Core VM using its own Nix.
+  Verification is also done with `.maint/tools/hashes`.
+
+I try to build on different machines and note down the results in `git notes`.
+Commits require a specific (but adjustable) amount of successful
+`nix`, `bootstrap` and `zilchos` builds before getting into the main branch.
