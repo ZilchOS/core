@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -ueo pipefail
+
+COMMIT=${1-HEAD}
+
+commit=$(git show -s --no-notes "$COMMIT")
+echo "$commit"
+if grep -q '^\s*Builds-required: none$' <<<"$commit"; then
+	echo '---'
+	echo '`Builds-required: none` in commit message, skipping commit'
+	exit 0
+fi
+echo '---'
+
+if grep -q '^\s*Builds-required: ' <<<"$commit"; then
+	verification_line=$(grep '^\s*Builds-required:' <<<"$commit")
+	verspec=$(sed 's|^\s*Builds-required:||' <<<"$verification_line")
+	if ! grep -Eq '^ nixos=[0-9]+ bootstrap=[0-9]+ zilchos=[0-9]+$' <<<"$verspec"; then
+		echo 'Malformed `Builds-required:` line' >&2
+		exit 7
+	fi
+	required_nixos=$(sed -E 's|.* nixos=([0-9]+).*|\1|' <<<"$verspec")
+	(( required_nixos >= 0 ))
+	required_bootstrap=$(sed -E 's|.* bootstrap=([0-9]+).*|\1|' <<<"$verspec")
+	(( required_bootstrap >= 0 ))
+	required_zilchos=$(sed -E 's|.* zilchos=([0-9]+).*|\1|' <<<"$verspec")
+	(( required_zilchos >= 0 ))
+else
+	required_nixos=2
+	required_bootstrap=1
+	required_zilchos=1
+fi
+
+git fetch origin refs/notes/commits:refs/notes/commits
+notes=$(git notes show "$COMMIT" \
+	| grep ^Built-on: \
+	| grep -v USE_CCACHE \
+	| sort -u)
+nix_nixos=$(grep -Fw nix=nixos <<<"$notes" | wc -l) || true
+nix_bootstrap=$(grep -Fw nix=bootstrap <<<"$notes" | wc -l) || true
+nix_zilchos=$(grep -Fw 'self nix=zilchos' <<<"$notes" | wc -l) || true
+echo "$notes"
+
+status=true
+text=""
+if (( nix_nixos < required_nixos )); then
+	text+="Not enough nix=nixos builds: $nix_nixos < $required_nixos\n"
+	status=false
+fi
+if (( nix_bootstrap < required_bootstrap )); then
+	text+="Not enough nix=bootstrap builds: $nix_bootstrap < $required_bootstrap\n"
+	status=false
+fi
+if (( nix_zilchos < required_zilchos )); then
+	text+="Not enough nix=zilchos builds: $nix_zilchos < $required_zilchos\n"
+	status=false
+fi
+
+echo '---'
+echo "${nix_nixos} out of ${required_nixos} required nix=nixos builds"
+echo "${nix_bootstrap} out of ${required_bootstrap} required nix=bootstrap builds"
+echo "${nix_zilchos} out of ${required_zilchos} required nix=zilchos builds"
+if ! $status; then
+	echo -ne "---\n$text"
+fi
+$status

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -ueo pipefail
+if [[ $# == 0 || "$1" == 'show' ]]; then
+	exec git tree --show-notes --decorate=short --color=always \
+		| grep -v '^|\s*$' \
+		| grep -v 'Notes:$' \
+		| sed 's/    Built-on: /^ Built-on: /' \
+		| less
+elif [[ "$1" == 'mark-built' ]] && (( $# >= 3 )) ; then
+	commit=$2; hostname=$3; nix=$4; shift 4; extra="$@"
+	git fetch origin refs/notes/commits:refs/notes/commits
+	if ! grep -Eqx 'nix=(nixos|bootstrap|zilchos)' <<<$nix; then
+		echo 'nix must be one of: nixos, bootstrap, zilchos' >/dev/stderr
+		exit 1
+	fi
+	msg="Built-on: $hostname $nix $extra"
+	if grep -Fqx "$msg" <(git notes show "$commit" 2>/dev/null); then
+		echo "$commit is already marked with '$msg'" >/dev/stderr
+		exit
+	fi
+	git notes append -m "$msg" "$commit"
+	git push origin refs/notes/commits
+else
+	echo 'Usage: ' >/dev/stderr
+	echo '  helpers/notes [show]' >/dev/stderr
+	echo -n '  helpers/notes mark-built ' >/dev/stderr
+	echo '<commit> <hostname> nix=[nixos|bootstrap|zilchos] <extra stuff>' >/dev/stderr
+	exit 1
+fi
