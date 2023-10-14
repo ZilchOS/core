@@ -5,7 +5,7 @@ set -uex
 [ -e .gitignore ]
 mkdir -p .tmp
 
-./.maint/tools/build-using-ccache.sh -o.tmp/kernel-$$ linux.config
+./.maint/tools/build-using-ccache -o.tmp/kernel-$$ linux.config
 
 cat .tmp/kernel-$$-config |
   grep -v 'is not set' |

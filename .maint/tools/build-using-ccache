@@ -7,7 +7,7 @@
 # your nix needs experimental-options = ca-derivations
 # and you need root access / to be a trusted user
 
-# example: ./build-using-ccache.sh musl -L
+# example: ./build-using-ccache musl -L
 
 : ${SKIP_BOOTSTRAP=0}
 
