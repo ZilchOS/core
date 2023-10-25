@@ -108,6 +108,7 @@ let
     gnuxorriso = callPackage ./live-cd/gnuxorriso.nix {
       linux-headers = _bootstrap.early-linux-headers;
     };
+    dmidecode = callPackage ./live-cd/dmidecode.nix {};
   };
 
 in pkgs
