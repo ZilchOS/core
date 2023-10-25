@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+bootscript="${!#}"
+qemu_args="${@: 1:$#-1}"
+cleanup() {
+  [ -e "$tmpdir/err" ] && cat "$tmpdir/err" > /dev/stderr
+  rm -f "$tmpdir/bootscript" "$tmpdir/retcode" "$tmpdir/err"
+  rm -d "$tmpdir"
+}
+trap cleanup EXIT
+tmpdir="$(mktemp -d)"
+cat "$bootscript" > "$tmpdir/bootscript"
+
+state=before
+inner_exitcode=''
+
+.maint/tools/boot-with-qemu ${@: 1:$#-1} \
+  -nographic \
+  -device e1000,netdev=u -netdev "user,id=u,tftp=$tmpdir" \
+  -smbios type=11,value=zilchos:b=tftp://10.0.2.2:69/bootscript \
+  2>"$tmpdir/err" \
+| while IFS= read -r line; do
+  line=${line%$'\n'}
+  line=${line%$'\r'}
+  if [[ "$state" == before ]]; then
+    if [[ "$line" == '= TFTP bootscript begins ======================================================' ]]; then
+      state=in
+    fi
+  elif [[ "$state" == in ]]; then
+    if [[ "$line" == '= TFTP bootscript ends ========================================================' ]]; then
+      state=out
+    else
+      echo "$line"
+    fi
+  elif [[ "$state" == out ]]; then
+    if [[ "$line" =~ ^\ \ TFTP\ bootscript\ return\ code:\ ([0-9]+) ]]; then
+      echo ${BASH_REMATCH[1]} > "$tmpdir/retcode"
+      state=ret
+    fi
+  fi
+done
+qemu_exitcode=${PIPESTATUS[0]}
+if [[ "$qemu_exitcode" == 0 ]]; then
+  rm "$tmpdir/err"
+else
+  exit "$qemu_exitcode"
+fi
+
+inner_exitcode=$(cat "$tmpdir/retcode")
+if [[ -n "$inner_exitcode" ]]; then
+  exit "$inner_exitcode"
+else
+  exit 255
+fi

@@ -65,6 +65,12 @@ Yeah, maybe not, but here's a toy Nix-based OS to play with anyway.
 * become a stepping stone to a tad richer distro
   (like, one with systemd or *gasp* git)
 
+## Misc
+
+### Execute a custom script inside a VM
+
+To spin up a VM, execute `/path/to/bootscript` and spin it back down, you can do `qemu-system-x86_64 -cdrom ZilchOS*.iso -nographic -device e1000,netdev=u -netdev user,id=u,tftp=/path/to -smbios type=11,value=zilchos:b=tftp://10.0.2.2:69/bootscript`, or just `.maint/tools/exec-in-vm $QEMU_OPTS /path/to/bootscript`.
+
 ## Reproducibility
 
 Reproducibility is deeply cared about,

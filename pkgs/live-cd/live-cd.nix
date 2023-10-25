@@ -4,7 +4,8 @@
 , ca-bundle, mbedtls, curl
 , libarchive, editline, brotli, sqlite, boost , lowdown, seccomp, libsodium
 , clang
-, zstd, limine, gnuxorriso }:
+, zstd, limine, gnuxorriso
+, dmidecode }:
 
 let
   version = "2023.10.1";
@@ -23,10 +24,10 @@ in
     args = [ "-uexc" ''
       PATH=${busybox}/bin
 
-      cat > $initscript <<EOF
+      cat > $initscript <<\EOF
       #!${busybox}/bin/ash
       set -uex
-      export PATH=${busybox}/bin:${nix}/bin
+      export PATH=${busybox}/bin:${nix}/bin:${dmidecode}/sbin
       echo 'Hello world!'
       mount -t devtmpfs devtmpfs /dev
       mount -t proc proc /proc
@@ -37,6 +38,22 @@ in
       if ip a | grep -q eth0:; then
         echo '127.0.0.1 localhost' > /etc/hosts
         udhcpc
+      fi
+      DMI=$(${dmidecode}/sbin/dmidecode --oem-string 1)
+      if expr "$DMI" : 'zilchos:b=tftp://.*:\d*/.*'; then
+        host=$(expr "$DMI" : 'zilchos:b=tftp://\(.*\):\d*/.*')
+        port=$(expr "$DMI" : 'zilchos:b=tftp://.*:\(\d*\)/.*')
+        path=$(expr "$DMI" : 'zilchos:b=tftp://.*:\d*/\(.*\)')
+        tftp -r "/$path" -l /bootscript -g "$host" "$port"
+        set +ex
+        echo -n '= TFTP bootscript begins ='
+        echo '====================================================='
+        ${busybox}/bin/ash /bootscript
+        ret=$?
+        echo -n '= TFTP bootscript ends ='
+        echo '======================================================='
+        echo "  TFTP bootscript return code: $ret"
+        poweroff -f
       fi
       setsid ash -c 'getty -n -l ${busybox}/bin/ash 0 /dev/tty0 &'
       exec setsid cttyhack ash
@@ -63,6 +80,7 @@ in
       included="$included ${sqlite} ${boost.nixRuntimeMini}"
       included="$included ${lowdown} ${seccomp} ${libsodium}"
       included="$included ${clang.sysroot}"
+      included="$included ${dmidecode}"
       for derivation in $included; do
         find $derivation -type d | sort > dirlist
         while IFS= read -r dir || [ -n "$dir" ]; do
